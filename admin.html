@@ -206,9 +206,9 @@
 
   <!-- Firebase SDK -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
     // ⚠️ REPLACE WITH YOUR FIREBASE CONFIG
 
@@ -230,16 +230,22 @@
     window.adminLogin = async function() {
       const email = document.getElementById('adminEmail').value.trim();
       const pass = document.getElementById('adminPass').value.trim();
+      const errEl = document.getElementById('adminError');
+      errEl.style.display = 'none';
+      if (!email || !pass) {
+        errEl.textContent = '❌ Please enter email and password.';
+        errEl.style.display = 'block';
+        return;
+      }
       try {
-        await signInWithEmailAndPassword(auth, email, pass);
-        if (auth.currentUser.email !== ADMIN_EMAIL) {
-          await signOut(auth);
-          throw new Error('Not admin');
+        const result = await signInWithEmailAndPassword(auth, email, pass);
+        if (result.user) {
+          document.getElementById('adminLogin').style.display = 'none';
+          document.getElementById('adminPanelMain').style.display = 'block';
         }
-        document.getElementById('adminLogin').style.display = 'none';
-        document.getElementById('adminPanelMain').style.display = 'block';
       } catch(e) {
-        document.getElementById('adminError').style.display = 'block';
+        errEl.textContent = '❌ Wrong email or password. Error: ' + e.code;
+        errEl.style.display = 'block';
       }
     };
 
