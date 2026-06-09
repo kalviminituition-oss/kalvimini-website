@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel – Kalvimini Teacher Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--blue:#1a73e8;--blue-dark:#1557b0;--blue-light:#e8f0fe;--text:#1f2937;--text-mid:#6b7280;--border:#e2e8f0;--white:#fff;--bg:#f0f4ff;--green:#34a853;--red:#ea4335;--orange:#f97316}
+    body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh}
+
+    /* LOGIN */
+    .admin-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .admin-login-box{background:var(--white);border-radius:20px;box-shadow:0 8px 40px rgba(26,115,232,0.15);width:100%;max-width:420px;overflow:hidden}
+    .admin-login-head{background:linear-gradient(135deg,#1557b0,#0d47a1);padding:32px;text-align:center;color:#fff}
+    .admin-login-head h1{font-size:1.5rem;font-weight:900}
+    .admin-login-head p{font-size:0.85rem;opacity:0.8;margin-top:6px}
+    .admin-login-body{padding:28px}
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;font-size:0.85rem;font-weight:700;margin-bottom:6px;color:var(--text-mid)}
+    .form-group input{width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:0.92rem;outline:none;background:var(--bg)}
+    .form-group input:focus{border-color:var(--blue);background:#fff}
+    .btn{padding:11px 20px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.92rem;cursor:pointer;transition:all 0.2s}
+    .btn-blue{background:var(--blue);color:#fff}
+    .btn-blue:hover{background:var(--blue-dark)}
+    .btn-green{background:var(--green);color:#fff}
+    .btn-red{background:var(--red);color:#fff}
+    .btn-orange{background:var(--orange);color:#fff}
+    .btn-full{width:100%}
+
+    /* ADMIN PANEL */
+    .admin-panel{display:none}
+    .admin-header{background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+    .admin-header .logo{font-size:1.4rem;font-weight:900}
+    .admin-header .logo span{color:#fbbc04}
+    .btn-logout-sm{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:7px 14px;border-radius:8px;font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer}
+
+    .admin-body{max-width:1100px;margin:0 auto;padding:32px 24px}
+
+    /* TABS */
+    .admin-tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+    .admin-tab{padding:10px 20px;border-radius:100px;font-weight:700;font-size:0.88rem;cursor:pointer;border:2px solid var(--border);background:var(--white);color:var(--text-mid);transition:all 0.2s}
+    .admin-tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+    .admin-panel-section{display:none}
+    .admin-panel-section.active{display:block}
+
+    /* CARDS */
+    .admin-card{background:var(--white);border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:24px}
+    .admin-card-head{background:var(--blue-light);padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .admin-card-head h3{font-size:1rem;font-weight:800;color:var(--blue)}
+    .admin-card-body{padding:20px}
+
+    /* TABLE */
+    .admin-table{width:100%;border-collapse:collapse}
+    .admin-table th{background:var(--blue);color:#fff;padding:10px 14px;text-align:left;font-size:0.85rem;font-weight:700}
+    .admin-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:0.87rem}
+    .admin-table tr:last-child td{border-bottom:none}
+    .admin-table tr:hover td{background:var(--blue-light)}
+
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .msg{padding:10px 14px;border-radius:8px;font-size:0.88rem;font-weight:600;margin-bottom:16px;display:none}
+    .msg-success{background:#d4f5e2;color:#166534;border:1px solid #86efac}
+    .msg-error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+
+    @media(max-width:600px){.form-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+  <!-- ADMIN LOGIN -->
+  <div class="admin-login" id="adminLogin">
+    <div class="admin-login-box">
+      <div class="admin-login-head">
+        <h1>🔐 Admin Panel</h1>
+        <p>Kalvimini — Teacher Dashboard</p>
+      </div>
+      <div class="admin-login-body">
+        <div id="adminError" class="msg msg-error">❌ Invalid credentials.</div>
+        <div class="form-group"><label>Admin Email</label><input type="email" id="adminEmail" placeholder="Your email"/></div>
+        <div class="form-group"><label>Password</label><input type="password" id="adminPass" placeholder="Your password"/></div>
+        <button class="btn btn-blue btn-full" onclick="adminLogin()">Login as Admin →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="admin-panel" id="adminPanelMain">
+    <div class="admin-header">
+      <div class="logo">Kalvi<span>mini</span> <span style="font-size:0.85rem;opacity:0.8;font-weight:600">Admin Panel</span></div>
+      <button class="btn-logout-sm" onclick="adminLogout()">Logout</button>
+    </div>
+    <div class="admin-body">
+
+      <div class="admin-tabs">
+        <div class="admin-tab active" onclick="showAdminTab('students')">👥 Students</div>
+        <div class="admin-tab" onclick="showAdminTab('add-student')">➕ Add Student</div>
+        <div class="admin-tab" onclick="showAdminTab('results')">🏆 Upload Results</div>
+        <div class="admin-tab" onclick="showAdminTab('attendance')">✅ Attendance</div>
+        <div class="admin-tab" onclick="showAdminTab('notices')">📢 Notices</div>
+      </div>
+
+      <!-- STUDENTS LIST -->
+      <div class="admin-panel-section active" id="admin-students">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <h3>All Students</h3>
+            <button class="btn btn-blue" onclick="loadStudents()" style="padding:7px 16px;font-size:0.82rem">🔄 Refresh</button>
+          </div>
+          <div class="admin-card-body">
+            <div id="studentsTableWrap"><p style="color:var(--text-mid)">Click Refresh to load students.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADD STUDENT -->
+      <div class="admin-panel-section" id="admin-add-student">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>➕ Add New Student</h3></div>
+          <div class="admin-card-body">
+            <div id="addMsg" class="msg msg-success">✅ Student added successfully!</div>
+            <div id="addErr" class="msg msg-error">❌ Error adding student.</div>
+            <div class="form-row">
+              <div class="form-group"><label>Full Name *</label><input type="text" id="sName" placeholder="Student full name"/></div>
+              <div class="form-group"><label>User ID * (they use this to login)</label><input type="text" id="sUserId" placeholder="e.g. KM001"/></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Password * (you set this)</label><input type="text" id="sPassword" placeholder="e.g. kalvi2026"/></div>
+              <div class="form-group"><label>Roll Number *</label><input type="text" id="sRoll" placeholder="e.g. 101"/></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Class *</label>
+                <select id="sClass" style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:0.92rem;outline:none;background:var(--bg)">
+                  <option>6th</option><option>7th</option><option>8th</option><option>9th</option><option selected>10th</option><option>11th</option><option>12th</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Parent Phone</label><input type="text" id="sPhone" placeholder="+91 XXXXX XXXXX"/></div>
+            </div>
+            <button class="btn btn-green" style="margin-top:8px" onclick="addStudent()">➕ Add Student</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UPLOAD RESULTS -->
+      <div class="admin-panel-section" id="admin-results">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>🏆 Upload Student Results</h3></div>
+          <div class="admin-card-body">
+            <div id="resultMsg" class="msg msg-success">✅ Results saved!</div>
+            <div class="form-row">
+              <div class="form-group"><label>Student User ID</label><input type="text" id="rUserId" placeholder="e.g. KM001"/></div>
+              <div class="form-group"><label>Exam Name</label><input type="text" id="rExamName" placeholder="e.g. Unit Test 1"/></div>
+            </div>
+            <div id="subjectMarks">
+              <div class="form-row">
+                <div class="form-group"><label>Maths (out of 100)</label><input type="number" id="rMaths" placeholder="e.g. 85" min="0" max="100"/></div>
+                <div class="form-group"><label>Science (out of 100)</label><input type="number" id="rScience" placeholder="e.g. 78" min="0" max="100"/></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>Tamil (out of 100)</label><input type="number" id="rTamil" placeholder="e.g. 90" min="0" max="100"/></div>
+                <div class="form-group"><label>English (out of 100)</label><input type="number" id="rEnglish" placeholder="e.g. 82" min="0" max="100"/></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>Social Science (out of 100)</label><input type="number" id="rSocial" placeholder="e.g. 75" min="0" max="100"/></div>
+              </div>
+            </div>
+            <button class="btn btn-blue" onclick="uploadResults()">💾 Save Results</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATTENDANCE -->
+      <div class="admin-panel-section" id="admin-attendance">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>✅ Update Attendance</h3></div>
+          <div class="admin-card-body">
+            <div id="attMsg" class="msg msg-success">✅ Attendance updated!</div>
+            <div class="form-row">
+              <div class="form-group"><label>Student User ID</label><input type="text" id="attUserId" placeholder="e.g. KM001"/></div>
+              <div class="form-group"><label>Total Days Conducted</label><input type="number" id="attTotal" placeholder="e.g. 30" min="0"/></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Days Present</label><input type="number" id="attPresent" placeholder="e.g. 27" min="0"/></div>
+            </div>
+            <button class="btn btn-green" onclick="updateAttendance()">✅ Update Attendance</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTICES -->
+      <div class="admin-panel-section" id="admin-notices">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>📢 Send Notice to Student</h3></div>
+          <div class="admin-card-body">
+            <div id="noticeMsg" class="msg msg-success">✅ Notice sent!</div>
+            <div class="form-group"><label>Student User ID (or type "all" for all students)</label><input type="text" id="noticeUserId" placeholder="e.g. KM001 or all"/></div>
+            <div class="form-group"><label>Notice Message</label><textarea id="noticeText" rows="3" style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:0.92rem;outline:none;resize:vertical" placeholder="Type your notice here..."></textarea></div>
+            <button class="btn btn-orange" onclick="sendNotice()">📢 Send Notice</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // ⚠️ REPLACE WITH YOUR FIREBASE CONFIG
+
+      apiKey: "AIzaSyAOxnYuGOUi9VrrACQIp48cgaWQmBJBuBc",
+      authDomain: "kalvimini-tuition.firebaseapp.com",
+      projectId: "kalvimini-tuition",
+      storageBucket: "kalvimini-tuition.firebasestorage.app",
+      messagingSenderId: "591716839478",
+      appId: "1:591716839478:web:e0d5c380dad521f1306897"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ⚠️ SET YOUR ADMIN EMAIL HERE
+    const ADMIN_EMAIL = "kalviminituition@gmail.com";
+
+    window.adminLogin = async function() {
+      const email = document.getElementById('adminEmail').value.trim();
+      const pass = document.getElementById('adminPass').value.trim();
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        if (auth.currentUser.email !== ADMIN_EMAIL) {
+          await signOut(auth);
+          throw new Error('Not admin');
+        }
+        document.getElementById('adminLogin').style.display = 'none';
+        document.getElementById('adminPanelMain').style.display = 'block';
+      } catch(e) {
+        document.getElementById('adminError').style.display = 'block';
+      }
+    };
+
+    window.adminLogout = async function() {
+      await signOut(auth);
+      window.location.reload();
+    };
+
+    window.addStudent = async function() {
+      const name = document.getElementById('sName').value.trim();
+      const userId = document.getElementById('sUserId').value.trim();
+      const password = document.getElementById('sPassword').value.trim();
+      const roll = document.getElementById('sRoll').value.trim();
+      const cls = document.getElementById('sClass').value;
+      const phone = document.getElementById('sPhone').value.trim();
+
+      if (!name || !userId || !password || !roll) {
+        document.getElementById('addErr').textContent = '❌ Please fill all required fields.';
+        document.getElementById('addErr').style.display = 'block';
+        return;
+      }
+
+      try {
+        // Create fake email from userId for Firebase Auth
+        const fakeEmail = `${userId.toLowerCase()}@kalvimini-student.com`;
+        await createUserWithEmailAndPassword(auth, fakeEmail, password);
+
+        // Re-login as admin after creating student
+        await signInWithEmailAndPassword(auth, ADMIN_EMAIL, document.getElementById('adminPass').value);
+
+        // Save to Firestore
+        await setDoc(doc(db, 'students', userId), {
+          name, email: fakeEmail, rollNumber: roll,
+          class: cls, phone,
+          attendance: { present: 0, total: 0 },
+          results: {}, notices: []
+        });
+
+        document.getElementById('addMsg').style.display = 'block';
+        document.getElementById('addErr').style.display = 'none';
+        ['sName','sUserId','sPassword','sRoll','sPhone'].forEach(id => document.getElementById(id).value = '');
+        setTimeout(() => document.getElementById('addMsg').style.display = 'none', 3000);
+
+      } catch(e) {
+        document.getElementById('addErr').textContent = '❌ Error: ' + e.message;
+        document.getElementById('addErr').style.display = 'block';
+      }
+    };
+
+    window.loadStudents = async function() {
+      const snap = await getDocs(collection(db, 'students'));
+      if (snap.empty) {
+        document.getElementById('studentsTableWrap').innerHTML = '<p style="color:var(--text-mid)">No students added yet.</p>';
+        return;
+      }
+      const rows = snap.docs.map(d => {
+        const s = d.data();
+        const pct = s.attendance?.total > 0 ? Math.round((s.attendance.present/s.attendance.total)*100) : 0;
+        return `<tr><td><strong>${s.name}</strong></td><td>${d.id}</td><td>${s.rollNumber}</td><td>${s.class}th</td><td>${pct}%</td></tr>`;
+      }).join('');
+      document.getElementById('studentsTableWrap').innerHTML = `<table class="admin-table"><tr><th>Name</th><th>User ID</th><th>Roll No</th><th>Class</th><th>Attendance</th></tr>${rows}</table>`;
+    };
+
+    window.uploadResults = async function() {
+      const id = document.getElementById('rUserId').value.trim();
+      const exam = document.getElementById('rExamName').value.trim();
+      if (!id || !exam) return;
+      try {
+        const results = {};
+        const fields = {Maths:'rMaths',Science:'rScience',Tamil:'rTamil',English:'rEnglish','Social Science':'rSocial'};
+        for (const [subj, fid] of Object.entries(fields)) {
+          const v = document.getElementById(fid).value;
+          if (v) results[`${exam} - ${subj}`] = parseInt(v);
+        }
+        await updateDoc(doc(db, 'students', id), { results });
+        document.getElementById('resultMsg').style.display = 'block';
+        setTimeout(() => document.getElementById('resultMsg').style.display = 'none', 3000);
+      } catch(e) {
+        alert('Error: ' + e.message);
+      }
+    };
+
+    window.updateAttendance = async function() {
+      const id = document.getElementById('attUserId').value.trim();
+      const total = parseInt(document.getElementById('attTotal').value);
+      const present = parseInt(document.getElementById('attPresent').value);
+      if (!id || isNaN(total) || isNaN(present)) return;
+      try {
+        await updateDoc(doc(db, 'students', id), { attendance: { total, present } });
+        document.getElementById('attMsg').style.display = 'block';
+        setTimeout(() => document.getElementById('attMsg').style.display = 'none', 3000);
+      } catch(e) { alert('Error: ' + e.message); }
+    };
+
+    window.sendNotice = async function() {
+      const id = document.getElementById('noticeUserId').value.trim();
+      const text = document.getElementById('noticeText').value.trim();
+      if (!id || !text) return;
+      const today = new Date().toLocaleDateString('en-IN');
+      const notice = { text, date: today };
+      try {
+        if (id === 'all') {
+          const snap = await getDocs(collection(db, 'students'));
+          for (const d of snap.docs) {
+            await updateDoc(doc(db, 'students', d.id), { notices: arrayUnion(notice) });
+          }
+        } else {
+          await updateDoc(doc(db, 'students', id), { notices: arrayUnion(notice) });
+        }
+        document.getElementById('noticeMsg').style.display = 'block';
+        document.getElementById('noticeText').value = '';
+        setTimeout(() => document.getElementById('noticeMsg').style.display = 'none', 3000);
+      } catch(e) { alert('Error: ' + e.message); }
+    };
+  </script>
+
+  <script>
+    function showAdminTab(name) {
+      document.querySelectorAll('.admin-panel-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('admin-' + name).classList.add('active');
+      event.target.classList.add('active');
+    }
+    window.showAdminTab = showAdminTab;
+  </script>
+</body>
+</html>
