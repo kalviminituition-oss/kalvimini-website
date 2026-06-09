@@ -31,10 +31,11 @@
     .input-wrap{position:relative}
     .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1rem}
     .input-wrap input{padding-left:40px}
-    .btn-login{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:background 0.2s,transform 0.15s;margin-top:4px}
-    .btn-login:hover{background:var(--blue-dark);transform:translateY(-1px)}
-    .btn-login:disabled{background:#94a3b8;cursor:not-allowed;transform:none}
+    .btn-login{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:background 0.2s;margin-top:4px}
+    .btn-login:hover{background:var(--blue-dark)}
+    .btn-login:disabled{background:#94a3b8;cursor:not-allowed}
     .error-msg{background:#fef2f2;border:1px solid #fecaca;color:var(--red);padding:10px 14px;border-radius:8px;font-size:0.88rem;font-weight:600;margin-bottom:16px;display:none}
+    .debug-msg{background:#fff8e1;border:1px solid #ffe082;color:#7c4f00;padding:10px 14px;border-radius:8px;font-size:0.82rem;font-weight:600;margin-bottom:16px;display:none;line-height:1.6}
     .login-footer{text-align:center;padding:16px 32px 24px;border-top:1px solid var(--border);font-size:0.83rem;color:var(--text-mid)}
     .login-footer a{color:var(--blue);font-weight:700}
   </style>
@@ -53,12 +54,13 @@
         <p class="subtitle">Enter your User ID and Password given by your teacher</p>
 
         <div class="error-msg" id="errorMsg"></div>
+        <div class="debug-msg" id="debugMsg"></div>
 
         <div class="form-group">
           <label>User ID</label>
           <div class="input-wrap">
             <span class="input-icon">👤</span>
-            <input type="text" id="userId" placeholder="Enter your User ID (e.g. KM001)" autocomplete="username"/>
+            <input type="text" id="userId" placeholder="Enter your User ID" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"/>
           </div>
         </div>
         <div class="form-group">
@@ -77,13 +79,11 @@
     </div>
   </div>
 
-  <!-- ✅ Firebase Compat SDK (no module needed) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // ✅ FIXED: Firebase config correctly declared
     const firebaseConfig = {
       apiKey: "AIzaSyAOxnYuGOUi9VrrACQIp48cgaWQmBJBuBc",
       authDomain: "kalvimini-tuition.firebaseapp.com",
@@ -97,54 +97,66 @@
     const auth = firebase.auth();
     const db   = firebase.firestore();
 
-    function showError(msg) {
-      const el = document.getElementById('errorMsg');
-      el.textContent = msg;
-      el.style.display = 'block';
-    }
-
     function handleLogin() {
-      const userId   = document.getElementById('userId').value.trim().toUpperCase();
-      const password = document.getElementById('password').value.trim();
-      const loginBtn = document.getElementById('loginBtn');
+      const userIdRaw = document.getElementById('userId').value.trim();
+      const userIdUp  = userIdRaw.toUpperCase();
+      const password  = document.getElementById('password').value;
+      const errorMsg  = document.getElementById('errorMsg');
+      const debugMsg  = document.getElementById('debugMsg');
+      const loginBtn  = document.getElementById('loginBtn');
 
-      document.getElementById('errorMsg').style.display = 'none';
+      errorMsg.style.display = 'none';
+      debugMsg.style.display = 'none';
 
-      if (!userId || !password) {
-        showError('❌ Please enter both User ID and Password.');
+      if (!userIdRaw || !password) {
+        errorMsg.textContent = '❌ Please enter both User ID and Password.';
+        errorMsg.style.display = 'block';
         return;
       }
 
       loginBtn.textContent = '⏳ Logging in...';
       loginBtn.disabled = true;
 
-      // Step 1: Get student record from Firestore using User ID
-      db.collection('students').doc(userId).get()
-        .then(snap => {
-          if (!snap.exists) {
-            throw new Error('Student not found. Check your User ID.');
+      // Try uppercase first, then exact as typed — handles all ID formats
+      tryLogin(userIdUp, password)
+        .catch(() => {
+          if (userIdRaw !== userIdUp) {
+            return tryLogin(userIdRaw, password);
           }
-          const data = snap.data();
-          // Step 2: Sign in with Firebase Auth using the stored fake email
-          return auth.signInWithEmailAndPassword(data.email, password)
-            .then(() => data); // pass data along
+          throw new Error('not found');
         })
-        .then(data => {
-          // Step 3: Save info to sessionStorage and redirect
-          sessionStorage.setItem('studentId',    userId);
-          sessionStorage.setItem('studentName',  data.name);
-          sessionStorage.setItem('studentClass', data.class);
-          sessionStorage.setItem('rollNumber',   data.rollNumber);
-          window.location.href = 'student-dashboard.html';
-        })
-        .catch(err => {
-          showError('❌ Invalid User ID or Password. Please try again.');
+        .catch(function(e) {
+          debugMsg.innerHTML =
+            '🔍 <strong>Tried User ID:</strong> ' + userIdUp + '<br>' +
+            '<strong>Tip:</strong> Copy the User ID exactly from the admin panel — no extra spaces.<br>' +
+            '<strong>Error:</strong> ' + e.message;
+          debugMsg.style.display = 'block';
+          errorMsg.textContent = '❌ Invalid User ID or Password. Please try again.';
+          errorMsg.style.display = 'block';
           loginBtn.textContent = 'Login to My Dashboard →';
           loginBtn.disabled = false;
         });
     }
 
-    // Allow Enter key to submit
+    function tryLogin(userId, password) {
+      return db.collection('students').doc(userId).get()
+        .then(function(snap) {
+          if (!snap.exists) {
+            throw new Error('User ID "' + userId + '" not found in database.');
+          }
+          var data  = snap.data();
+          var email = data.email || (userId.toLowerCase() + '@kalvimini-student.com');
+          return auth.signInWithEmailAndPassword(email, password)
+            .then(function() {
+              sessionStorage.setItem('studentId',    userId);
+              sessionStorage.setItem('studentName',  data.name);
+              sessionStorage.setItem('studentClass', data.class);
+              sessionStorage.setItem('rollNumber',   data.rollNumber);
+              window.location.href = 'student-dashboard.html';
+            });
+        });
+    }
+
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') handleLogin();
     });
