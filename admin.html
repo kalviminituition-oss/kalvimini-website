@@ -10,7 +10,6 @@
     :root{--blue:#1a73e8;--blue-dark:#1557b0;--blue-light:#e8f0fe;--text:#1f2937;--text-mid:#6b7280;--border:#e2e8f0;--white:#fff;--bg:#f0f4ff;--green:#34a853;--red:#ea4335;--orange:#f97316}
     body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh}
 
-    /* LOGIN */
     .admin-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
     .admin-login-box{background:var(--white);border-radius:20px;box-shadow:0 8px 40px rgba(26,115,232,0.15);width:100%;max-width:420px;overflow:hidden}
     .admin-login-head{background:linear-gradient(135deg,#1557b0,#0d47a1);padding:32px;text-align:center;color:#fff}
@@ -29,7 +28,6 @@
     .btn-orange{background:var(--orange);color:#fff}
     .btn-full{width:100%}
 
-    /* ADMIN PANEL */
     .admin-panel{display:none}
     .admin-header{background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
     .admin-header .logo{font-size:1.4rem;font-weight:900}
@@ -38,7 +36,6 @@
 
     .admin-body{max-width:1100px;margin:0 auto;padding:32px 24px}
 
-    /* TABS */
     .admin-tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
     .admin-tab{padding:10px 20px;border-radius:100px;font-weight:700;font-size:0.88rem;cursor:pointer;border:2px solid var(--border);background:var(--white);color:var(--text-mid);transition:all 0.2s}
     .admin-tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
@@ -46,13 +43,11 @@
     .admin-panel-section{display:none}
     .admin-panel-section.active{display:block}
 
-    /* CARDS */
     .admin-card{background:var(--white);border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:24px}
     .admin-card-head{background:var(--blue-light);padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
     .admin-card-head h3{font-size:1rem;font-weight:800;color:var(--blue)}
     .admin-card-body{padding:20px}
 
-    /* TABLE */
     .admin-table{width:100%;border-collapse:collapse}
     .admin-table th{background:var(--blue);color:#fff;padding:10px 14px;text-align:left;font-size:0.85rem;font-weight:700}
     .admin-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:0.87rem}
@@ -80,7 +75,7 @@
         <div id="adminError" class="msg msg-error">❌ Invalid credentials.</div>
         <div class="form-group"><label>Admin Email</label><input type="email" id="adminEmail" placeholder="Your email"/></div>
         <div class="form-group"><label>Password</label><input type="password" id="adminPass" placeholder="Your password"/></div>
-        <button class="btn btn-blue btn-full" onclick="adminLogin()">Login as Admin →</button>
+        <button class="btn btn-blue btn-full" id="loginBtn" onclick="adminLogin()">Login as Admin →</button>
       </div>
     </div>
   </div>
@@ -94,11 +89,11 @@
     <div class="admin-body">
 
       <div class="admin-tabs">
-        <div class="admin-tab active" onclick="showAdminTab('students')">👥 Students</div>
-        <div class="admin-tab" onclick="showAdminTab('add-student')">➕ Add Student</div>
-        <div class="admin-tab" onclick="showAdminTab('results')">🏆 Upload Results</div>
-        <div class="admin-tab" onclick="showAdminTab('attendance')">✅ Attendance</div>
-        <div class="admin-tab" onclick="showAdminTab('notices')">📢 Notices</div>
+        <div class="admin-tab active" onclick="showAdminTab('students', this)">👥 Students</div>
+        <div class="admin-tab" onclick="showAdminTab('add-student', this)">➕ Add Student</div>
+        <div class="admin-tab" onclick="showAdminTab('results', this)">🏆 Upload Results</div>
+        <div class="admin-tab" onclick="showAdminTab('attendance', this)">✅ Attendance</div>
+        <div class="admin-tab" onclick="showAdminTab('notices', this)">📢 Notices</div>
       </div>
 
       <!-- STUDENTS LIST -->
@@ -152,18 +147,16 @@
               <div class="form-group"><label>Student User ID</label><input type="text" id="rUserId" placeholder="e.g. KM001"/></div>
               <div class="form-group"><label>Exam Name</label><input type="text" id="rExamName" placeholder="e.g. Unit Test 1"/></div>
             </div>
-            <div id="subjectMarks">
-              <div class="form-row">
-                <div class="form-group"><label>Maths (out of 100)</label><input type="number" id="rMaths" placeholder="e.g. 85" min="0" max="100"/></div>
-                <div class="form-group"><label>Science (out of 100)</label><input type="number" id="rScience" placeholder="e.g. 78" min="0" max="100"/></div>
-              </div>
-              <div class="form-row">
-                <div class="form-group"><label>Tamil (out of 100)</label><input type="number" id="rTamil" placeholder="e.g. 90" min="0" max="100"/></div>
-                <div class="form-group"><label>English (out of 100)</label><input type="number" id="rEnglish" placeholder="e.g. 82" min="0" max="100"/></div>
-              </div>
-              <div class="form-row">
-                <div class="form-group"><label>Social Science (out of 100)</label><input type="number" id="rSocial" placeholder="e.g. 75" min="0" max="100"/></div>
-              </div>
+            <div class="form-row">
+              <div class="form-group"><label>Maths (out of 100)</label><input type="number" id="rMaths" placeholder="e.g. 85" min="0" max="100"/></div>
+              <div class="form-group"><label>Science (out of 100)</label><input type="number" id="rScience" placeholder="e.g. 78" min="0" max="100"/></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Tamil (out of 100)</label><input type="number" id="rTamil" placeholder="e.g. 90" min="0" max="100"/></div>
+              <div class="form-group"><label>English (out of 100)</label><input type="number" id="rEnglish" placeholder="e.g. 82" min="0" max="100"/></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Social Science (out of 100)</label><input type="number" id="rSocial" placeholder="e.g. 75" min="0" max="100"/></div>
             </div>
             <button class="btn btn-blue" onclick="uploadResults()">💾 Save Results</button>
           </div>
@@ -204,31 +197,14 @@
     </div>
   </div>
 
-  <!-- Global function bridge -->
+  <!-- ✅ Firebase SDK (CDN compat version — no module needed) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
   <script>
-    function adminLogin() { if(window._adminLogin) window._adminLogin(); }
-    function adminLogout() { if(window._adminLogout) window._adminLogout(); }
-    function addStudent() { if(window._addStudent) window._addStudent(); }
-    function loadStudents() { if(window._loadStudents) window._loadStudents(); }
-    function uploadResults() { if(window._uploadResults) window._uploadResults(); }
-    function updateAttendance() { if(window._updateAttendance) window._updateAttendance(); }
-    function sendNotice() { if(window._sendNotice) window._sendNotice(); }
-    function showAdminTab(n) { 
-      document.querySelectorAll('.admin-panel-section').forEach(s=>s.classList.remove('active'));
-      document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
-      document.getElementById('admin-'+n).classList.add('active');
-      event.target.classList.add('active');
-    }
-  </script>
-
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-
-    // ⚠️ REPLACE WITH YOUR FIREBASE CONFIG
-
+    // ✅ FIXED: Firebase config is now correctly declared
+    const firebaseConfig = {
       apiKey: "AIzaSyAOxnYuGOUi9VrrACQIp48cgaWQmBJBuBc",
       authDomain: "kalvimini-tuition.firebaseapp.com",
       projectId: "kalvimini-tuition",
@@ -237,148 +213,219 @@
       appId: "1:591716839478:web:e0d5c380dad521f1306897"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    // ✅ Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    // ⚠️ SET YOUR ADMIN EMAIL HERE
+    // ✅ ADMIN EMAIL — change if needed
     const ADMIN_EMAIL = "kalviminituition@gmail.com";
 
-    window._adminLogin = async function() {
+    // ─── TAB SWITCHER ────────────────────────────────
+    function showAdminTab(name, el) {
+      document.querySelectorAll('.admin-panel-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('admin-' + name).classList.add('active');
+      el.classList.add('active');
+    }
+
+    // ─── ADMIN LOGIN ─────────────────────────────────
+    function adminLogin() {
       const email = document.getElementById('adminEmail').value.trim();
-      const pass = document.getElementById('adminPass').value.trim();
+      const pass  = document.getElementById('adminPass').value.trim();
       const errEl = document.getElementById('adminError');
       errEl.style.display = 'none';
+
       if (!email || !pass) {
         errEl.textContent = '❌ Please enter email and password.';
         errEl.style.display = 'block';
         return;
       }
-      try {
-        const result = await signInWithEmailAndPassword(auth, email, pass);
-        if (result.user) {
+
+      document.getElementById('loginBtn').textContent = 'Logging in...';
+      document.getElementById('loginBtn').disabled = true;
+
+      auth.signInWithEmailAndPassword(email, pass)
+        .then(() => {
           document.getElementById('adminLogin').style.display = 'none';
           document.getElementById('adminPanelMain').style.display = 'block';
-        }
-      } catch(e) {
-        errEl.textContent = '❌ Wrong email or password. Error: ' + e.code;
-        errEl.style.display = 'block';
+        })
+        .catch(e => {
+          errEl.textContent = '❌ Wrong email or password. (' + e.code + ')';
+          errEl.style.display = 'block';
+          document.getElementById('loginBtn').textContent = 'Login as Admin →';
+          document.getElementById('loginBtn').disabled = false;
+        });
+    }
+
+    // Allow Enter key on login screen
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && document.getElementById('adminLogin').style.display !== 'none') {
+        adminLogin();
       }
-    };
+    });
 
-    window._adminLogout = async function() {
-      await signOut(auth);
-      window.location.reload();
-    };
+    // ─── LOGOUT ──────────────────────────────────────
+    function adminLogout() {
+      auth.signOut().then(() => window.location.reload());
+    }
 
-    window._addStudent = async function() {
-      const name = document.getElementById('sName').value.trim();
-      const userId = document.getElementById('sUserId').value.trim();
+    // ─── ADD STUDENT ─────────────────────────────────
+    function addStudent() {
+      const name     = document.getElementById('sName').value.trim();
+      const userId   = document.getElementById('sUserId').value.trim().toUpperCase();
       const password = document.getElementById('sPassword').value.trim();
-      const roll = document.getElementById('sRoll').value.trim();
-      const cls = document.getElementById('sClass').value;
-      const phone = document.getElementById('sPhone').value.trim();
+      const roll     = document.getElementById('sRoll').value.trim();
+      const cls      = document.getElementById('sClass').value;
+      const phone    = document.getElementById('sPhone').value.trim();
+      const addMsg   = document.getElementById('addMsg');
+      const addErr   = document.getElementById('addErr');
+
+      addMsg.style.display = 'none';
+      addErr.style.display = 'none';
 
       if (!name || !userId || !password || !roll) {
-        document.getElementById('addErr').textContent = '❌ Please fill all required fields.';
-        document.getElementById('addErr').style.display = 'block';
+        addErr.textContent = '❌ Please fill all required fields.';
+        addErr.style.display = 'block';
         return;
       }
 
-      try {
-        // Create fake email from userId for Firebase Auth
-        const fakeEmail = `${userId.toLowerCase()}@kalvimini-student.com`;
-        await createUserWithEmailAndPassword(auth, fakeEmail, password);
+      const fakeEmail = userId.toLowerCase() + '@kalvimini-student.com';
+      const adminPass = document.getElementById('adminPass') ? document.getElementById('adminPass').value : '';
 
-        // Re-login as admin after creating student
-        await signInWithEmailAndPassword(auth, ADMIN_EMAIL, document.getElementById('adminPass').value);
+      // Step 1: Create Firebase Auth user for student
+      auth.createUserWithEmailAndPassword(fakeEmail, password)
+        .then(() => {
+          // Step 2: Re-login as admin (creating a student signs you out as admin)
+          return auth.signInWithEmailAndPassword(ADMIN_EMAIL, adminPass);
+        })
+        .then(() => {
+          // Step 3: Save student data to Firestore
+          return db.collection('students').doc(userId).set({
+            name, email: fakeEmail, rollNumber: roll,
+            class: cls, phone,
+            attendance: { present: 0, total: 0 },
+            results: {}, notices: []
+          });
+        })
+        .then(() => {
+          addMsg.style.display = 'block';
+          ['sName','sUserId','sPassword','sRoll','sPhone'].forEach(id => document.getElementById(id).value = '');
+          setTimeout(() => addMsg.style.display = 'none', 3000);
+        })
+        .catch(e => {
+          addErr.textContent = '❌ Error: ' + e.message;
+          addErr.style.display = 'block';
+        });
+    }
 
-        // Save to Firestore
-        await setDoc(doc(db, 'students', userId), {
-          name, email: fakeEmail, rollNumber: roll,
-          class: cls, phone,
-          attendance: { present: 0, total: 0 },
-          results: {}, notices: []
+    // ─── LOAD STUDENTS ───────────────────────────────
+    function loadStudents() {
+      document.getElementById('studentsTableWrap').innerHTML = '<p style="color:var(--text-mid)">Loading...</p>';
+      db.collection('students').get()
+        .then(snap => {
+          if (snap.empty) {
+            document.getElementById('studentsTableWrap').innerHTML = '<p style="color:var(--text-mid)">No students added yet.</p>';
+            return;
+          }
+          const rows = snap.docs.map(d => {
+            const s = d.data();
+            const pct = s.attendance && s.attendance.total > 0
+              ? Math.round((s.attendance.present / s.attendance.total) * 100) : 0;
+            return `<tr>
+              <td><strong>${s.name}</strong></td>
+              <td>${d.id}</td>
+              <td>${s.rollNumber}</td>
+              <td>${s.class} Std</td>
+              <td>${s.phone || '—'}</td>
+              <td>${pct}%</td>
+            </tr>`;
+          }).join('');
+          document.getElementById('studentsTableWrap').innerHTML =
+            `<table class="admin-table">
+              <tr><th>Name</th><th>User ID</th><th>Roll No</th><th>Class</th><th>Phone</th><th>Attendance</th></tr>
+              ${rows}
+            </table>`;
+        })
+        .catch(e => {
+          document.getElementById('studentsTableWrap').innerHTML = '<p style="color:red">Error: ' + e.message + '</p>';
+        });
+    }
+
+    // ─── UPLOAD RESULTS ──────────────────────────────
+    function uploadResults() {
+      const id   = document.getElementById('rUserId').value.trim().toUpperCase();
+      const exam = document.getElementById('rExamName').value.trim();
+      const resultMsg = document.getElementById('resultMsg');
+      resultMsg.style.display = 'none';
+
+      if (!id || !exam) { alert('Please enter Student User ID and Exam Name.'); return; }
+
+      const fields = { Maths:'rMaths', Science:'rScience', Tamil:'rTamil', English:'rEnglish', 'Social Science':'rSocial' };
+      const updates = {};
+      for (const [subj, fid] of Object.entries(fields)) {
+        const v = document.getElementById(fid).value;
+        if (v !== '') updates['results.' + exam + ' - ' + subj] = parseInt(v);
+      }
+
+      db.collection('students').doc(id).update(updates)
+        .then(() => {
+          resultMsg.style.display = 'block';
+          setTimeout(() => resultMsg.style.display = 'none', 3000);
+        })
+        .catch(e => alert('Error saving results: ' + e.message));
+    }
+
+    // ─── UPDATE ATTENDANCE ───────────────────────────
+    function updateAttendance() {
+      const id      = document.getElementById('attUserId').value.trim().toUpperCase();
+      const total   = parseInt(document.getElementById('attTotal').value);
+      const present = parseInt(document.getElementById('attPresent').value);
+      const attMsg  = document.getElementById('attMsg');
+      attMsg.style.display = 'none';
+
+      if (!id || isNaN(total) || isNaN(present)) { alert('Please fill all fields.'); return; }
+      if (present > total) { alert('Days Present cannot be more than Total Days.'); return; }
+
+      db.collection('students').doc(id).update({ attendance: { total, present } })
+        .then(() => {
+          attMsg.style.display = 'block';
+          setTimeout(() => attMsg.style.display = 'none', 3000);
+        })
+        .catch(e => alert('Error: ' + e.message));
+    }
+
+    // ─── SEND NOTICE ─────────────────────────────────
+    function sendNotice() {
+      const id       = document.getElementById('noticeUserId').value.trim().toUpperCase();
+      const text     = document.getElementById('noticeText').value.trim();
+      const noticeMsg = document.getElementById('noticeMsg');
+      noticeMsg.style.display = 'none';
+
+      if (!id || !text) { alert('Please fill all fields.'); return; }
+
+      const today  = new Date().toLocaleDateString('en-IN');
+      const notice = { text, date: today };
+
+      const sendToOne = (docId) =>
+        db.collection('students').doc(docId).update({
+          notices: firebase.firestore.FieldValue.arrayUnion(notice)
         });
 
-        document.getElementById('addMsg').style.display = 'block';
-        document.getElementById('addErr').style.display = 'none';
-        ['sName','sUserId','sPassword','sRoll','sPhone'].forEach(id => document.getElementById(id).value = '');
-        setTimeout(() => document.getElementById('addMsg').style.display = 'none', 3000);
+      const task = id === 'ALL'
+        ? db.collection('students').get().then(snap =>
+            Promise.all(snap.docs.map(d => sendToOne(d.id)))
+          )
+        : sendToOne(id);
 
-      } catch(e) {
-        document.getElementById('addErr').textContent = '❌ Error: ' + e.message;
-        document.getElementById('addErr').style.display = 'block';
-      }
-    };
-
-    window._loadStudents = async function() {
-      const snap = await getDocs(collection(db, 'students'));
-      if (snap.empty) {
-        document.getElementById('studentsTableWrap').innerHTML = '<p style="color:var(--text-mid)">No students added yet.</p>';
-        return;
-      }
-      const rows = snap.docs.map(d => {
-        const s = d.data();
-        const pct = s.attendance?.total > 0 ? Math.round((s.attendance.present/s.attendance.total)*100) : 0;
-        return `<tr><td><strong>${s.name}</strong></td><td>${d.id}</td><td>${s.rollNumber}</td><td>${s.class}th</td><td>${pct}%</td></tr>`;
-      }).join('');
-      document.getElementById('studentsTableWrap').innerHTML = `<table class="admin-table"><tr><th>Name</th><th>User ID</th><th>Roll No</th><th>Class</th><th>Attendance</th></tr>${rows}</table>`;
-    };
-
-    window._uploadResults = async function() {
-      const id = document.getElementById('rUserId').value.trim();
-      const exam = document.getElementById('rExamName').value.trim();
-      if (!id || !exam) return;
-      try {
-        const results = {};
-        const fields = {Maths:'rMaths',Science:'rScience',Tamil:'rTamil',English:'rEnglish','Social Science':'rSocial'};
-        for (const [subj, fid] of Object.entries(fields)) {
-          const v = document.getElementById(fid).value;
-          if (v) results[`${exam} - ${subj}`] = parseInt(v);
-        }
-        await updateDoc(doc(db, 'students', id), { results });
-        document.getElementById('resultMsg').style.display = 'block';
-        setTimeout(() => document.getElementById('resultMsg').style.display = 'none', 3000);
-      } catch(e) {
-        alert('Error: ' + e.message);
-      }
-    };
-
-    window._updateAttendance = async function() {
-      const id = document.getElementById('attUserId').value.trim();
-      const total = parseInt(document.getElementById('attTotal').value);
-      const present = parseInt(document.getElementById('attPresent').value);
-      if (!id || isNaN(total) || isNaN(present)) return;
-      try {
-        await updateDoc(doc(db, 'students', id), { attendance: { total, present } });
-        document.getElementById('attMsg').style.display = 'block';
-        setTimeout(() => document.getElementById('attMsg').style.display = 'none', 3000);
-      } catch(e) { alert('Error: ' + e.message); }
-    };
-
-    window._sendNotice = async function() {
-      const id = document.getElementById('noticeUserId').value.trim();
-      const text = document.getElementById('noticeText').value.trim();
-      if (!id || !text) return;
-      const today = new Date().toLocaleDateString('en-IN');
-      const notice = { text, date: today };
-      try {
-        if (id === 'all') {
-          const snap = await getDocs(collection(db, 'students'));
-          for (const d of snap.docs) {
-            await updateDoc(doc(db, 'students', d.id), { notices: arrayUnion(notice) });
-          }
-        } else {
-          await updateDoc(doc(db, 'students', id), { notices: arrayUnion(notice) });
-        }
-        document.getElementById('noticeMsg').style.display = 'block';
-        document.getElementById('noticeText').value = '';
-        setTimeout(() => document.getElementById('noticeMsg').style.display = 'none', 3000);
-      } catch(e) { alert('Error: ' + e.message); }
-    };
+      task.then(() => {
+          noticeMsg.style.display = 'block';
+          document.getElementById('noticeText').value = '';
+          setTimeout(() => noticeMsg.style.display = 'none', 3000);
+        })
+        .catch(e => alert('Error sending notice: ' + e.message));
+    }
   </script>
-
 
 </body>
 </html>

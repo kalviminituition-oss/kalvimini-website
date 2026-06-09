@@ -13,10 +13,8 @@
       --white:#fff;--bg:#f0f4ff;--red:#ea4335;--green:#34a853;
     }
     body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
-    /* TOPBAR */
     .topbar{background:var(--blue-dark);color:#fff;text-align:center;padding:8px;font-size:0.82rem}
     .topbar a{color:#bfd4ff}
-    /* MAIN */
     .login-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px}
     .login-box{background:var(--white);border-radius:20px;box-shadow:0 8px 40px rgba(26,115,232,0.15);width:100%;max-width:440px;overflow:hidden}
     .login-header{background:linear-gradient(135deg,var(--blue),var(--blue-dark));padding:36px 32px;text-align:center;color:#fff}
@@ -37,7 +35,6 @@
     .btn-login:hover{background:var(--blue-dark);transform:translateY(-1px)}
     .btn-login:disabled{background:#94a3b8;cursor:not-allowed;transform:none}
     .error-msg{background:#fef2f2;border:1px solid #fecaca;color:var(--red);padding:10px 14px;border-radius:8px;font-size:0.88rem;font-weight:600;margin-bottom:16px;display:none}
-    .loading{display:none;text-align:center;padding:8px;color:var(--blue);font-weight:700;font-size:0.9rem}
     .login-footer{text-align:center;padding:16px 32px 24px;border-top:1px solid var(--border);font-size:0.83rem;color:var(--text-mid)}
     .login-footer a{color:var(--blue);font-weight:700}
   </style>
@@ -55,14 +52,13 @@
         <h2>Student Login</h2>
         <p class="subtitle">Enter your User ID and Password given by your teacher</p>
 
-        <div class="error-msg" id="errorMsg">❌ Invalid User ID or Password. Please try again.</div>
-        <div class="loading" id="loadingMsg">⏳ Logging in...</div>
+        <div class="error-msg" id="errorMsg"></div>
 
         <div class="form-group">
           <label>User ID</label>
           <div class="input-wrap">
             <span class="input-icon">👤</span>
-            <input type="text" id="userId" placeholder="Enter your User ID" autocomplete="username"/>
+            <input type="text" id="userId" placeholder="Enter your User ID (e.g. KM001)" autocomplete="username"/>
           </div>
         </div>
         <div class="form-group">
@@ -81,18 +77,14 @@
     </div>
   </div>
 
+  <!-- ✅ Firebase Compat SDK (no module needed) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
   <script>
-    function handleLogin() { if(window._handleLogin) window._handleLogin(); }
-  </script>
-
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-
-    // ⚠️ REPLACE THIS WITH YOUR FIREBASE CONFIG
-
+    // ✅ FIXED: Firebase config correctly declared
+    const firebaseConfig = {
       apiKey: "AIzaSyAOxnYuGOUi9VrrACQIp48cgaWQmBJBuBc",
       authDomain: "kalvimini-tuition.firebaseapp.com",
       projectId: "kalvimini-tuition",
@@ -101,60 +93,60 @@
       appId: "1:591716839478:web:e0d5c380dad521f1306897"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.firestore();
 
-    window._handleLogin = async function() {
-      const userId = document.getElementById('userId').value.trim();
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function handleLogin() {
+      const userId   = document.getElementById('userId').value.trim().toUpperCase();
       const password = document.getElementById('password').value.trim();
-      const errorMsg = document.getElementById('errorMsg');
-      const loadingMsg = document.getElementById('loadingMsg');
       const loginBtn = document.getElementById('loginBtn');
 
+      document.getElementById('errorMsg').style.display = 'none';
+
       if (!userId || !password) {
-        errorMsg.textContent = '❌ Please enter both User ID and Password.';
-        errorMsg.style.display = 'block';
+        showError('❌ Please enter both User ID and Password.');
         return;
       }
 
-      errorMsg.style.display = 'none';
-      loadingMsg.style.display = 'block';
+      loginBtn.textContent = '⏳ Logging in...';
       loginBtn.disabled = true;
 
-      try {
-        // Get student email from Firestore using their User ID
-        const studentRef = doc(db, 'students', userId);
-        const studentSnap = await getDoc(studentRef);
+      // Step 1: Get student record from Firestore using User ID
+      db.collection('students').doc(userId).get()
+        .then(snap => {
+          if (!snap.exists) {
+            throw new Error('Student not found. Check your User ID.');
+          }
+          const data = snap.data();
+          // Step 2: Sign in with Firebase Auth using the stored fake email
+          return auth.signInWithEmailAndPassword(data.email, password)
+            .then(() => data); // pass data along
+        })
+        .then(data => {
+          // Step 3: Save info to sessionStorage and redirect
+          sessionStorage.setItem('studentId',    userId);
+          sessionStorage.setItem('studentName',  data.name);
+          sessionStorage.setItem('studentClass', data.class);
+          sessionStorage.setItem('rollNumber',   data.rollNumber);
+          window.location.href = 'student-dashboard.html';
+        })
+        .catch(err => {
+          showError('❌ Invalid User ID or Password. Please try again.');
+          loginBtn.textContent = 'Login to My Dashboard →';
+          loginBtn.disabled = false;
+        });
+    }
 
-        if (!studentSnap.exists()) {
-          throw new Error('Student not found');
-        }
-
-        const studentData = studentSnap.data();
-        // Sign in with Firebase Auth
-        await signInWithEmailAndPassword(auth, studentData.email, password);
-
-        // Save student info to sessionStorage
-        sessionStorage.setItem('studentId', userId);
-        sessionStorage.setItem('studentName', studentData.name);
-        sessionStorage.setItem('studentClass', studentData.class);
-        sessionStorage.setItem('rollNumber', studentData.rollNumber);
-
-        // Redirect to dashboard
-        window.location.href = 'student-dashboard.html';
-
-      } catch (error) {
-        errorMsg.textContent = '❌ Invalid User ID or Password. Please try again.';
-        errorMsg.style.display = 'block';
-        loadingMsg.style.display = 'none';
-        loginBtn.disabled = false;
-      }
-    };
-
-    // Allow Enter key to login
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { if(window._handleLogin) window._handleLogin(); }
+    // Allow Enter key to submit
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleLogin();
     });
   </script>
 </body>
