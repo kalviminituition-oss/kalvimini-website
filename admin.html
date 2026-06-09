@@ -59,6 +59,9 @@
     .msg-success{background:#d4f5e2;color:#166534;border:1px solid #86efac}
     .msg-error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
 
+    /* password strength hint */
+    .hint{font-size:0.78rem;color:var(--text-mid);margin-top:4px}
+
     @media(max-width:600px){.form-row{grid-template-columns:1fr}}
   </style>
 </head>
@@ -72,7 +75,7 @@
         <p>Kalvimini — Teacher Dashboard</p>
       </div>
       <div class="admin-login-body">
-        <div id="adminError" class="msg msg-error">❌ Invalid credentials.</div>
+        <div id="adminError" class="msg msg-error"></div>
         <div class="form-group"><label>Admin Email</label><input type="email" id="adminEmail" placeholder="Your email"/></div>
         <div class="form-group"><label>Password</label><input type="password" id="adminPass" placeholder="Your password"/></div>
         <button class="btn btn-blue btn-full" id="loginBtn" onclick="adminLogin()">Login as Admin →</button>
@@ -114,24 +117,54 @@
         <div class="admin-card">
           <div class="admin-card-head"><h3>➕ Add New Student</h3></div>
           <div class="admin-card-body">
-            <div id="addMsg" class="msg msg-success">✅ Student added successfully!</div>
-            <div id="addErr" class="msg msg-error">❌ Error adding student.</div>
+            <div id="addMsg" class="msg msg-success"></div>
+            <div id="addErr" class="msg msg-error"></div>
+
+            <!-- AUTO GENERATE HINT -->
+            <div style="background:var(--blue-light);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:0.85rem;color:var(--blue)">
+              💡 <strong>Tip:</strong> Use the <strong>Auto Generate</strong> button to get a safe User ID and Password automatically — no typing mistakes!
+            </div>
+
             <div class="form-row">
               <div class="form-group"><label>Full Name *</label><input type="text" id="sName" placeholder="Student full name"/></div>
-              <div class="form-group"><label>User ID * (they use this to login)</label><input type="text" id="sUserId" placeholder="e.g. KM001"/></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label>Password * (you set this)</label><input type="text" id="sPassword" placeholder="e.g. kalvi2026"/></div>
-              <div class="form-group"><label>Roll Number *</label><input type="text" id="sRoll" placeholder="e.g. 101"/></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label>Class *</label>
+              <div class="form-group">
+                <label>Class *</label>
                 <select id="sClass" style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:0.92rem;outline:none;background:var(--bg)">
                   <option>6th</option><option>7th</option><option>8th</option><option>9th</option><option selected>10th</option><option>11th</option><option>12th</option>
                 </select>
               </div>
-              <div class="form-group"><label>Parent Phone</label><input type="text" id="sPhone" placeholder="+91 XXXXX XXXXX"/></div>
             </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Roll Number *</label>
+                <input type="text" id="sRoll" placeholder="e.g. 001"/>
+              </div>
+              <div class="form-group">
+                <label>Parent Phone</label>
+                <input type="text" id="sPhone" placeholder="+91 XXXXX XXXXX"/>
+              </div>
+            </div>
+
+            <!-- AUTO GENERATED FIELDS -->
+            <div style="background:#f8fafc;border:2px dashed var(--border);border-radius:10px;padding:16px;margin-bottom:16px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                <span style="font-weight:800;font-size:0.92rem;color:var(--text)">🔑 Login Credentials</span>
+                <button class="btn btn-blue" onclick="autoGenerate()" style="padding:7px 16px;font-size:0.82rem">⚡ Auto Generate</button>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>User ID (Student uses this to login)</label>
+                  <input type="text" id="sUserId" placeholder="Click Auto Generate →"/>
+                  <div class="hint">Only letters and numbers. No spaces or special characters.</div>
+                </div>
+                <div class="form-group">
+                  <label>Password (Student uses this to login)</label>
+                  <input type="text" id="sPassword" placeholder="Click Auto Generate →"/>
+                  <div class="hint">Only letters and numbers. No $, @, # symbols.</div>
+                </div>
+              </div>
+            </div>
+
             <button class="btn btn-green" style="margin-top:8px" onclick="addStudent()">➕ Add Student</button>
           </div>
         </div>
@@ -143,8 +176,9 @@
           <div class="admin-card-head"><h3>🏆 Upload Student Results</h3></div>
           <div class="admin-card-body">
             <div id="resultMsg" class="msg msg-success">✅ Results saved!</div>
+            <div id="resultErr" class="msg msg-error"></div>
             <div class="form-row">
-              <div class="form-group"><label>Student User ID</label><input type="text" id="rUserId" placeholder="e.g. KM001"/></div>
+              <div class="form-group"><label>Student User ID</label><input type="text" id="rUserId" placeholder="e.g. KM10001"/></div>
               <div class="form-group"><label>Exam Name</label><input type="text" id="rExamName" placeholder="e.g. Unit Test 1"/></div>
             </div>
             <div class="form-row">
@@ -170,7 +204,7 @@
           <div class="admin-card-body">
             <div id="attMsg" class="msg msg-success">✅ Attendance updated!</div>
             <div class="form-row">
-              <div class="form-group"><label>Student User ID</label><input type="text" id="attUserId" placeholder="e.g. KM001"/></div>
+              <div class="form-group"><label>Student User ID</label><input type="text" id="attUserId" placeholder="e.g. KM10001"/></div>
               <div class="form-group"><label>Total Days Conducted</label><input type="number" id="attTotal" placeholder="e.g. 30" min="0"/></div>
             </div>
             <div class="form-row">
@@ -187,7 +221,7 @@
           <div class="admin-card-head"><h3>📢 Send Notice to Student</h3></div>
           <div class="admin-card-body">
             <div id="noticeMsg" class="msg msg-success">✅ Notice sent!</div>
-            <div class="form-group"><label>Student User ID (or type "all" for all students)</label><input type="text" id="noticeUserId" placeholder="e.g. KM001 or all"/></div>
+            <div class="form-group"><label>Student User ID (or type "all" for all students)</label><input type="text" id="noticeUserId" placeholder="e.g. KM10001 or all"/></div>
             <div class="form-group"><label>Notice Message</label><textarea id="noticeText" rows="3" style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:0.92rem;outline:none;resize:vertical" placeholder="Type your notice here..."></textarea></div>
             <button class="btn btn-orange" onclick="sendNotice()">📢 Send Notice</button>
           </div>
@@ -197,13 +231,13 @@
     </div>
   </div>
 
-  <!-- ✅ Firebase SDK (CDN compat version — no module needed) -->
+  <!-- Firebase Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // ✅ FIXED: Firebase config is now correctly declared
+    // ── Firebase config ──────────────────────────────
     const firebaseConfig = {
       apiKey: "AIzaSyAOxnYuGOUi9VrrACQIp48cgaWQmBJBuBc",
       authDomain: "kalvimini-tuition.firebaseapp.com",
@@ -213,15 +247,19 @@
       appId: "1:591716839478:web:e0d5c380dad521f1306897"
     };
 
-    // ✅ Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    // Main app (admin)
+    firebase.initializeApp(firebaseConfig, 'adminApp');
+    const auth = firebase.app('adminApp').auth();
+    const db   = firebase.app('adminApp').firestore();
 
-    // ✅ ADMIN EMAIL — change if needed
+    // ✅ SECOND app — used ONLY to create student accounts
+    // This means creating a student will NEVER log out the admin
+    firebase.initializeApp(firebaseConfig, 'studentApp');
+    const studentAuth = firebase.app('studentApp').auth();
+
     const ADMIN_EMAIL = "kalviminituition@gmail.com";
 
-    // ─── TAB SWITCHER ────────────────────────────────
+    // ── Tab switcher ─────────────────────────────────
     function showAdminTab(name, el) {
       document.querySelectorAll('.admin-panel-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
@@ -229,22 +267,18 @@
       el.classList.add('active');
     }
 
-    // ─── ADMIN LOGIN ─────────────────────────────────
+    // ── Admin Login ──────────────────────────────────
     function adminLogin() {
       const email = document.getElementById('adminEmail').value.trim();
       const pass  = document.getElementById('adminPass').value.trim();
       const errEl = document.getElementById('adminError');
       errEl.style.display = 'none';
-
       if (!email || !pass) {
         errEl.textContent = '❌ Please enter email and password.';
-        errEl.style.display = 'block';
-        return;
+        errEl.style.display = 'block'; return;
       }
-
-      document.getElementById('loginBtn').textContent = 'Logging in...';
-      document.getElementById('loginBtn').disabled = true;
-
+      const btn = document.getElementById('loginBtn');
+      btn.textContent = '⏳ Logging in...'; btn.disabled = true;
       auth.signInWithEmailAndPassword(email, pass)
         .then(() => {
           document.getElementById('adminLogin').style.display = 'none';
@@ -253,28 +287,36 @@
         .catch(e => {
           errEl.textContent = '❌ Wrong email or password. (' + e.code + ')';
           errEl.style.display = 'block';
-          document.getElementById('loginBtn').textContent = 'Login as Admin →';
-          document.getElementById('loginBtn').disabled = false;
+          btn.textContent = 'Login as Admin →'; btn.disabled = false;
         });
     }
 
-    // Allow Enter key on login screen
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && document.getElementById('adminLogin').style.display !== 'none') {
-        adminLogin();
-      }
+      if (e.key === 'Enter') adminLogin();
     });
 
-    // ─── LOGOUT ──────────────────────────────────────
+    // ── Logout ───────────────────────────────────────
     function adminLogout() {
       auth.signOut().then(() => window.location.reload());
     }
 
-    // ─── ADD STUDENT ─────────────────────────────────
+    // ── Auto Generate User ID & Password ────────────
+    function autoGenerate() {
+      const cls  = document.getElementById('sClass').value.replace('th','').replace('st','').replace('nd','').replace('rd','');
+      const roll = document.getElementById('sRoll').value.trim().padStart(3,'0') || Math.floor(Math.random()*900+100);
+      const rand = Math.random().toString(36).substring(2,6).toUpperCase();
+      const userId   = 'KM' + cls + roll + rand;
+      const password = 'Kalvi' + roll + cls + rand;
+      document.getElementById('sUserId').value   = userId;
+      document.getElementById('sPassword').value = password;
+    }
+
+    // ── Add Student ──────────────────────────────────
+    // ✅ Uses second Firebase app so admin stays logged in
     function addStudent() {
       const name     = document.getElementById('sName').value.trim();
-      const userId   = document.getElementById('sUserId').value.trim().toUpperCase();
-      const password = document.getElementById('sPassword').value.trim();
+      const userId   = document.getElementById('sUserId').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+      const password = document.getElementById('sPassword').value.trim().replace(/[^A-Za-z0-9]/g,'');
       const roll     = document.getElementById('sRoll').value.trim();
       const cls      = document.getElementById('sClass').value;
       const phone    = document.getElementById('sPhone').value.trim();
@@ -285,41 +327,48 @@
       addErr.style.display = 'none';
 
       if (!name || !userId || !password || !roll) {
-        addErr.textContent = '❌ Please fill all required fields.';
-        addErr.style.display = 'block';
-        return;
+        addErr.textContent = '❌ Please fill Name, Roll Number, and click Auto Generate for User ID & Password.';
+        addErr.style.display = 'block'; return;
+      }
+      if (password.length < 6) {
+        addErr.textContent = '❌ Password must be at least 6 characters.';
+        addErr.style.display = 'block'; return;
       }
 
       const fakeEmail = userId.toLowerCase() + '@kalvimini-student.com';
-      const adminPass = document.getElementById('adminPass') ? document.getElementById('adminPass').value : '';
 
-      // Step 1: Create Firebase Auth user for student
-      auth.createUserWithEmailAndPassword(fakeEmail, password)
+      // ✅ Use studentAuth (second app) — admin session is NOT affected
+      studentAuth.createUserWithEmailAndPassword(fakeEmail, password)
         .then(() => {
-          // Step 2: Re-login as admin (creating a student signs you out as admin)
-          return auth.signInWithEmailAndPassword(ADMIN_EMAIL, adminPass);
-        })
-        .then(() => {
-          // Step 3: Save student data to Firestore
+          // Save to Firestore using main admin db
           return db.collection('students').doc(userId).set({
-            name, email: fakeEmail, rollNumber: roll,
-            class: cls, phone,
+            name, email: fakeEmail,
+            rollNumber: roll, class: cls, phone,
             attendance: { present: 0, total: 0 },
             results: {}, notices: []
           });
         })
         .then(() => {
+          // Sign out only the studentAuth app (not admin)
+          return studentAuth.signOut();
+        })
+        .then(() => {
+          addMsg.textContent = '✅ Student added! User ID: ' + userId + ' | Password: ' + password;
           addMsg.style.display = 'block';
+          // Clear fields
           ['sName','sUserId','sPassword','sRoll','sPhone'].forEach(id => document.getElementById(id).value = '');
-          setTimeout(() => addMsg.style.display = 'none', 3000);
         })
         .catch(e => {
-          addErr.textContent = '❌ Error: ' + e.message;
+          if (e.code === 'auth/email-already-in-use') {
+            addErr.textContent = '❌ This User ID already exists. Please use a different one.';
+          } else {
+            addErr.textContent = '❌ Error: ' + e.message;
+          }
           addErr.style.display = 'block';
         });
     }
 
-    // ─── LOAD STUDENTS ───────────────────────────────
+    // ── Load Students ────────────────────────────────
     function loadStudents() {
       document.getElementById('studentsTableWrap').innerHTML = '<p style="color:var(--text-mid)">Loading...</p>';
       db.collection('students').get()
@@ -352,41 +401,44 @@
         });
     }
 
-    // ─── UPLOAD RESULTS ──────────────────────────────
+    // ── Upload Results ───────────────────────────────
     function uploadResults() {
       const id   = document.getElementById('rUserId').value.trim().toUpperCase();
       const exam = document.getElementById('rExamName').value.trim();
       const resultMsg = document.getElementById('resultMsg');
+      const resultErr = document.getElementById('resultErr');
       resultMsg.style.display = 'none';
-
-      if (!id || !exam) { alert('Please enter Student User ID and Exam Name.'); return; }
-
+      resultErr.style.display = 'none';
+      if (!id || !exam) {
+        resultErr.textContent = '❌ Please enter Student User ID and Exam Name.';
+        resultErr.style.display = 'block'; return;
+      }
       const fields = { Maths:'rMaths', Science:'rScience', Tamil:'rTamil', English:'rEnglish', 'Social Science':'rSocial' };
       const updates = {};
       for (const [subj, fid] of Object.entries(fields)) {
         const v = document.getElementById(fid).value;
         if (v !== '') updates['results.' + exam + ' - ' + subj] = parseInt(v);
       }
-
       db.collection('students').doc(id).update(updates)
         .then(() => {
           resultMsg.style.display = 'block';
           setTimeout(() => resultMsg.style.display = 'none', 3000);
         })
-        .catch(e => alert('Error saving results: ' + e.message));
+        .catch(e => {
+          resultErr.textContent = '❌ Student not found or error: ' + e.message;
+          resultErr.style.display = 'block';
+        });
     }
 
-    // ─── UPDATE ATTENDANCE ───────────────────────────
+    // ── Update Attendance ────────────────────────────
     function updateAttendance() {
       const id      = document.getElementById('attUserId').value.trim().toUpperCase();
       const total   = parseInt(document.getElementById('attTotal').value);
       const present = parseInt(document.getElementById('attPresent').value);
       const attMsg  = document.getElementById('attMsg');
       attMsg.style.display = 'none';
-
       if (!id || isNaN(total) || isNaN(present)) { alert('Please fill all fields.'); return; }
       if (present > total) { alert('Days Present cannot be more than Total Days.'); return; }
-
       db.collection('students').doc(id).update({ attendance: { total, present } })
         .then(() => {
           attMsg.style.display = 'block';
@@ -395,37 +447,30 @@
         .catch(e => alert('Error: ' + e.message));
     }
 
-    // ─── SEND NOTICE ─────────────────────────────────
+    // ── Send Notice ──────────────────────────────────
     function sendNotice() {
-      const id       = document.getElementById('noticeUserId').value.trim().toUpperCase();
-      const text     = document.getElementById('noticeText').value.trim();
+      const id        = document.getElementById('noticeUserId').value.trim().toUpperCase();
+      const text      = document.getElementById('noticeText').value.trim();
       const noticeMsg = document.getElementById('noticeMsg');
       noticeMsg.style.display = 'none';
-
       if (!id || !text) { alert('Please fill all fields.'); return; }
-
       const today  = new Date().toLocaleDateString('en-IN');
       const notice = { text, date: today };
-
       const sendToOne = (docId) =>
         db.collection('students').doc(docId).update({
-          notices: firebase.firestore.FieldValue.arrayUnion(notice)
+          notices: firebase.app('adminApp').firestore.FieldValue
+            ? firebase.app('adminApp').firestore.FieldValue.arrayUnion(notice)
+            : firebase.firestore.FieldValue.arrayUnion(notice)
         });
-
       const task = id === 'ALL'
-        ? db.collection('students').get().then(snap =>
-            Promise.all(snap.docs.map(d => sendToOne(d.id)))
-          )
+        ? db.collection('students').get().then(snap => Promise.all(snap.docs.map(d => sendToOne(d.id))))
         : sendToOne(id);
-
       task.then(() => {
-          noticeMsg.style.display = 'block';
-          document.getElementById('noticeText').value = '';
-          setTimeout(() => noticeMsg.style.display = 'none', 3000);
-        })
-        .catch(e => alert('Error sending notice: ' + e.message));
+        noticeMsg.style.display = 'block';
+        document.getElementById('noticeText').value = '';
+        setTimeout(() => noticeMsg.style.display = 'none', 3000);
+      }).catch(e => alert('Error: ' + e.message));
     }
   </script>
-
 </body>
 </html>
