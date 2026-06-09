@@ -204,6 +204,23 @@
     </div>
   </div>
 
+  <!-- Global function bridge -->
+  <script>
+    function adminLogin() { if(window._adminLogin) window._adminLogin(); }
+    function adminLogout() { if(window._adminLogout) window._adminLogout(); }
+    function addStudent() { if(window._addStudent) window._addStudent(); }
+    function loadStudents() { if(window._loadStudents) window._loadStudents(); }
+    function uploadResults() { if(window._uploadResults) window._uploadResults(); }
+    function updateAttendance() { if(window._updateAttendance) window._updateAttendance(); }
+    function sendNotice() { if(window._sendNotice) window._sendNotice(); }
+    function showAdminTab(n) { 
+      document.querySelectorAll('.admin-panel-section').forEach(s=>s.classList.remove('active'));
+      document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+      document.getElementById('admin-'+n).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
@@ -227,7 +244,7 @@
     // ⚠️ SET YOUR ADMIN EMAIL HERE
     const ADMIN_EMAIL = "kalviminituition@gmail.com";
 
-    window.adminLogin = async function() {
+    window._adminLogin = async function() {
       const email = document.getElementById('adminEmail').value.trim();
       const pass = document.getElementById('adminPass').value.trim();
       const errEl = document.getElementById('adminError');
@@ -249,12 +266,12 @@
       }
     };
 
-    window.adminLogout = async function() {
+    window._adminLogout = async function() {
       await signOut(auth);
       window.location.reload();
     };
 
-    window.addStudent = async function() {
+    window._addStudent = async function() {
       const name = document.getElementById('sName').value.trim();
       const userId = document.getElementById('sUserId').value.trim();
       const password = document.getElementById('sPassword').value.trim();
@@ -295,7 +312,7 @@
       }
     };
 
-    window.loadStudents = async function() {
+    window._loadStudents = async function() {
       const snap = await getDocs(collection(db, 'students'));
       if (snap.empty) {
         document.getElementById('studentsTableWrap').innerHTML = '<p style="color:var(--text-mid)">No students added yet.</p>';
@@ -309,7 +326,7 @@
       document.getElementById('studentsTableWrap').innerHTML = `<table class="admin-table"><tr><th>Name</th><th>User ID</th><th>Roll No</th><th>Class</th><th>Attendance</th></tr>${rows}</table>`;
     };
 
-    window.uploadResults = async function() {
+    window._uploadResults = async function() {
       const id = document.getElementById('rUserId').value.trim();
       const exam = document.getElementById('rExamName').value.trim();
       if (!id || !exam) return;
@@ -328,7 +345,7 @@
       }
     };
 
-    window.updateAttendance = async function() {
+    window._updateAttendance = async function() {
       const id = document.getElementById('attUserId').value.trim();
       const total = parseInt(document.getElementById('attTotal').value);
       const present = parseInt(document.getElementById('attPresent').value);
@@ -340,7 +357,7 @@
       } catch(e) { alert('Error: ' + e.message); }
     };
 
-    window.sendNotice = async function() {
+    window._sendNotice = async function() {
       const id = document.getElementById('noticeUserId').value.trim();
       const text = document.getElementById('noticeText').value.trim();
       if (!id || !text) return;
@@ -362,14 +379,6 @@
     };
   </script>
 
-  <script>
-    function showAdminTab(name) {
-      document.querySelectorAll('.admin-panel-section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-      document.getElementById('admin-' + name).classList.add('active');
-      event.target.classList.add('active');
-    }
-    window.showAdminTab = showAdminTab;
-  </script>
+
 </body>
 </html>

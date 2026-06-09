@@ -81,6 +81,10 @@
     </div>
   </div>
 
+  <script>
+    function handleLogin() { if(window._handleLogin) window._handleLogin(); }
+  </script>
+
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
@@ -101,7 +105,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    window.handleLogin = async function() {
+    window._handleLogin = async function() {
       const userId = document.getElementById('userId').value.trim();
       const password = document.getElementById('password').value.trim();
       const errorMsg = document.getElementById('errorMsg');
@@ -150,7 +154,7 @@
 
     // Allow Enter key to login
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') window.handleLogin();
+      if (e.key === 'Enter') { if(window._handleLogin) window._handleLogin(); }
     });
   </script>
 </body>

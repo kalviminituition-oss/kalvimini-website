@@ -276,6 +276,17 @@
 
   </div><!-- end dash-content -->
 
+  <script>
+    function handleLogout() { if(window._handleLogout) window._handleLogout(); }
+    function searchResult() { if(window._searchResult) window._searchResult(); }
+    function showTab(name) {
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.getElementById('panel-'+name).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
@@ -354,7 +365,7 @@
     });
 
     // Search result by roll number
-    window.searchResult = async function() {
+    window._searchResult = async function() {
       const roll = document.getElementById('rollInput').value.trim();
       if (!roll) return;
 
@@ -395,22 +406,13 @@
     };
 
     // Logout
-    window.handleLogout = async function() {
+    window._handleLogout = async function() {
       await signOut(auth);
       sessionStorage.clear();
       window.location.href = 'student-login.html';
     };
   </script>
 
-  <script>
-    // Tab switching
-    function showTab(name) {
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.getElementById('panel-' + name).classList.add('active');
-      event.target.classList.add('active');
-    }
-    window.showTab = showTab;
-  </script>
+
 </body>
 </html>
