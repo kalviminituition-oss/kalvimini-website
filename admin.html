@@ -301,15 +301,18 @@
     }
 
     // ── Auto Generate User ID & Password ────────────
-    function autoGenerate() {
-  const cls  = document.getElementById('sClass').value.replace(/[^0-9]/g,'');
-  const roll = document.getElementById('sRoll').value.trim().padStart(3,'0');
-  if (!roll || roll === '000') {
+ function autoGenerate() {
+  const cls = document.getElementById('sClass').value.replace(/[^0-9]/g,'');
+  const rollRaw = document.getElementById('sRoll').value.trim();
+  if (!rollRaw) {
     alert('Please enter Roll Number first!');
     return;
   }
-  const userId   = 'KM' + cls + roll;
-  const password = 'Kalvi' + cls + roll;
+  // Extract only the last 3 digits from roll number
+  // Works for both "001" and "KM26-10-001" formats
+  const digits = rollRaw.replace(/[^0-9]/g,'').slice(-3).padStart(3,'0');
+  const userId   = 'KM' + cls + digits;
+  const password = 'Kalvi' + cls + digits;
   document.getElementById('sUserId').value   = userId;
   document.getElementById('sPassword').value = password;
 }
