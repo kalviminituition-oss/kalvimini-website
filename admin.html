@@ -301,21 +301,24 @@
     }
 
     // ── Auto Generate User ID & Password ────────────
- function autoGenerate() {
-  const cls = document.getElementById('sClass').value.replace(/[^0-9]/g,'');
-  const rollRaw = document.getElementById('sRoll').value.trim();
-  if (!rollRaw) {
-    alert('Please enter Roll Number first!');
-    return;
-  }
-  // Extract only the last 3 digits from roll number
-  // Works for both "001" and "KM26-10-001" formats
-  const digits = rollRaw.replace(/[^0-9]/g,'').slice(-3).padStart(3,'0');
-  const userId   = 'KM' + cls + digits;
-  const password = 'Kalvi' + cls + digits;
-  document.getElementById('sUserId').value   = userId;
-  document.getElementById('sPassword').value = password;
-}
+    function autoGenerate() {
+      // Get class number only e.g. "10th" → "10"
+      const cls = document.getElementById('sClass').value.replace(/[^0-9]/g,'');
+      const rollRaw = document.getElementById('sRoll').value.trim();
+      if (!rollRaw) {
+        alert('Please enter Roll Number first!');
+        return;
+      }
+      // Extract only last 3 digits from roll number
+      // Works for "001" AND "KM26-10-001" formats
+      const digits = rollRaw.replace(/[^0-9]/g,'').slice(-3).padStart(3,'0');
+      // Clean simple ID — e.g. KM10001
+      const userId   = 'KM' + cls + digits;
+      const password = 'Kalvi' + cls + digits;
+      document.getElementById('sUserId').value   = userId;
+      document.getElementById('sPassword').value = password;
+    }
+
     // ── Add Student ──────────────────────────────────
     // ✅ Uses second Firebase app so admin stays logged in
     function addStudent() {
