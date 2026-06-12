@@ -302,15 +302,17 @@
 
     // ── Auto Generate User ID & Password ────────────
     function autoGenerate() {
-      const cls  = document.getElementById('sClass').value.replace('th','').replace('st','').replace('nd','').replace('rd','');
-      const roll = document.getElementById('sRoll').value.trim().padStart(3,'0') || Math.floor(Math.random()*900+100);
-      const rand = Math.random().toString(36).substring(2,6).toUpperCase();
-      const userId   = 'KM' + cls + roll + rand;
-      const password = 'Kalvi' + roll + cls + rand;
-      document.getElementById('sUserId').value   = userId;
-      document.getElementById('sPassword').value = password;
-    }
-
+  const cls  = document.getElementById('sClass').value.replace(/[^0-9]/g,'');
+  const roll = document.getElementById('sRoll').value.trim().padStart(3,'0');
+  if (!roll || roll === '000') {
+    alert('Please enter Roll Number first!');
+    return;
+  }
+  const userId   = 'KM' + cls + roll;
+  const password = 'Kalvi' + cls + roll;
+  document.getElementById('sUserId').value   = userId;
+  document.getElementById('sPassword').value = password;
+}
     // ── Add Student ──────────────────────────────────
     // ✅ Uses second Firebase app so admin stays logged in
     function addStudent() {
