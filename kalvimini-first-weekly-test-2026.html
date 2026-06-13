@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KalviMini First Weekly Test 2026 | 12th Standard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #1A3C6E;
+      --accent:  #F4A300;
+      --green:   #16A34A;
+      --red:     #DC2626;
+      --white:   #FFFFFF;
+      --light:   #F0F5FF;
+      --border:  #D6E4F7;
+      --text:    #1C1C2E;
+      --muted:   #5A6070;
+      --radius:  12px;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #F8FAFF;
+      color: var(--text);
+      line-height: 1.7;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* ── LOCK SCREEN ── */
+    #lockScreen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, var(--primary), #0D2550);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+    .lock-box {
+      background: white;
+      border-radius: 16px;
+      padding: 40px 32px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .lock-logo {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .lock-logo span { color: var(--accent); }
+    .lock-subtitle {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .lock-box h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .lock-box p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .lock-box input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 1.1rem;
+      text-align: center;
+      letter-spacing: 0.15em;
+      font-weight: 700;
+      color: var(--primary);
+      outline: none;
+      margin-bottom: 14px;
+      font-family: monospace;
+    }
+    .lock-box input:focus { border-color: var(--primary); }
+    .lock-btn {
+      width: 100%;
+      background: var(--accent);
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .lock-btn:hover { opacity: 0.88; }
+    .lock-error {
+      color: var(--red);
+      font-size: 0.85rem;
+      margin-top: 10px;
+      display: none;
+    }
+    .lock-info {
+      margin-top: 20px;
+      background: var(--light);
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .lock-info strong { color: var(--primary); }
+
+    /* ── BLOCKED SCREEN ── */
+    #blockedScreen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #7F1D1D, #DC2626);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+    #blockedScreen h1 {
+      color: white;
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+    #blockedScreen p {
+      color: rgba(255,255,255,0.85);
+      font-size: 1rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    #blockedScreen .block-icon { font-size: 4rem; margin-bottom: 16px; }
+
+    /* ── EXPIRED SCREEN ── */
+    #expiredScreen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #1A3C6E, #0D2550);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+    #expiredScreen h1 { color: var(--accent); font-size: 2rem; margin-bottom: 12px; }
+    #expiredScreen p { color: rgba(255,255,255,0.85); font-size: 1rem; }
+    #expiredScreen .exp-icon { font-size: 4rem; margin-bottom: 16px; }
+
+    /* ── HEADER ── */
+    .test-header {
+      background: linear-gradient(135deg, var(--primary), #0D2550);
+      color: white;
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .brand { font-size: 1rem; font-weight: 800; }
+    .brand span { color: var(--accent); }
+    .timer-box {
+      background: var(--accent);
+      color: var(--primary);
+      font-size: 1.2rem;
+      font-weight: 800;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-family: monospace;
+      letter-spacing: 0.05em;
+    }
+    .timer-box.warning { background: #FCA5A5; color: #7F1D1D; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+
+    .header-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 10px 20px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.75);
+    }
+    .header-info span strong { color: white; }
+
+    /* ── TEST TITLE BANNER ── */
+    .test-banner {
+      background: var(--white);
+      border-bottom: 3px solid var(--accent);
+      padding: 20px;
+      text-align: center;
+    }
+    .test-banner h1 {
+      font-size: clamp(1.1rem, 3vw, 1.6rem);
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .test-banner .test-id {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-family: monospace;
+    }
+    .test-meta {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .meta-chip {
+      background: var(--light);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* ── INSTRUCTIONS ── */
+    .instructions {
+      background: #FFFBEB;
+      border: 1.5px solid #FDE68A;
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin: 20px;
+      font-size: 0.85rem;
+      color: #92400E;
+    }
+    .instructions h3 { color: #78350F; margin-bottom: 8px; font-size: 0.9rem; }
+    .instructions ol { padding-left: 18px; }
+    .instructions ol li { margin-bottom: 4px; }
+
+    /* ── CONTAINER ── */
+    .container { max-width: 900px; margin: 0 auto; padding: 0 16px 48px; }
+
+    /* ── SUBJECT BLOCK ── */
+    .subject-block {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin: 24px 0;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(26,60,110,0.06);
+    }
+    .subject-header {
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .subject-icon { font-size: 1.5rem; }
+    .subject-header h2 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: white;
+      flex: 1;
+    }
+    .subject-header .marks-badge {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .sh-maths  { background: linear-gradient(90deg, #1A3C6E, #1e4d8c); }
+    .sh-physics { background: linear-gradient(90deg, #065F46, #059669); }
+    .sh-chemistry { background: linear-gradient(90deg, #7C2D12, #C2410C); }
+    .sh-english { background: linear-gradient(90deg, #4C1D95, #7C3AED); }
+
+    /* ── PART SECTION ── */
+    .part-section { padding: 20px 24px 8px; }
+    .part-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--light);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 16px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+    .part-instruction {
+      font-size: 0.80rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+
+    /* ── QUESTION CARD ── */
+    .q-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .q-card-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      background: var(--light);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .q-no {
+      background: var(--primary);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 10px;
+    }
+    .q-marks {
+      font-size: 0.70rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 10px;
+    }
+    .m1 { background: #DBEAFE; color: #1E40AF; }
+    .m2 { background: #D1FAE5; color: #065F46; }
+    .m3 { background: #EDE9FE; color: #5B21B6; }
+    .m5 { background: #FEF3C7; color: #92400E; }
+
+    .q-body { padding: 14px 16px; }
+
+    /* ── BILINGUAL ── */
+    .bilingual {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 600px) { .bilingual { grid-template-columns: 1fr; } }
+
+    .lang-en, .lang-ta {
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+    }
+    .lang-en {
+      background: #EFF6FF;
+      border-left: 3px solid #3B82F6;
+    }
+    .lang-ta {
+      background: #F0FDF4;
+      border-left: 3px solid #16A34A;
+    }
+    .lang-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .lang-label.en { color: #1E40AF; }
+    .lang-label.ta { color: #065F46; }
+    .lang-en p, .lang-ta p { font-size: 0.88rem; color: var(--text); }
+
+    /* ENGLISH ONLY (no Tamil) */
+    .single-lang {
+      background: #EFF6FF;
+      border-left: 3px solid #3B82F6;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+
+    /* ── MCQ OPTIONS ── */
+    .mcq-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    @media (max-width: 480px) { .mcq-options { grid-template-columns: 1fr; } }
+    .mcq-opt {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-size: 0.83rem;
+      color: var(--text);
+    }
+    .mcq-opt-ta {
+      font-size: 0.83rem;
+      color: #1C4532;
+    }
+
+    /* ── OR DIVIDER ── */
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0;
+      padding: 0 16px;
+    }
+    .or-divider::before, .or-divider::after {
+      content: '';
+      flex: 1;
+      border-top: 1.5px dashed var(--border);
+    }
+    .or-tag {
+      background: var(--accent);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 20px;
+    }
+
+    /* ── MATH ── */
+    .math { font-family: 'Cambria Math', Georgia, serif; font-style: italic; }
+
+    /* ── PART DIVIDER ── */
+    hr.part-div {
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 8px 24px;
+    }
+
+    /* ── FOOTER NOTE ── */
+    .footer-note {
+      background: linear-gradient(135deg, var(--primary), #0D2550);
+      color: white;
+      text-align: center;
+      padding: 28px 20px;
+      margin-top: 32px;
+      border-radius: var(--radius);
+    }
+    .footer-note h3 { color: var(--accent); margin-bottom: 8px; }
+    .footer-note p { font-size: 0.85rem; color: rgba(255,255,255,0.80); }
+
+    @media (max-width: 600px) {
+      .part-section { padding: 16px 16px 6px; }
+      .q-body { padding: 12px 12px; }
+    }
+
+    /* ── WATERMARK ── */
+    body::after {
+      content: 'KalviMini Tuition | kalviminituition.in';
+      position: fixed;
+      bottom: 10px;
+      right: 14px;
+      font-size: 0.72rem;
+      color: rgba(26,60,110,0.25);
+      pointer-events: none;
+      z-index: 1000;
+    }
+  </style>
+
+  <!-- MathJax for rendering math equations -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ -->
+<!-- LOCK SCREEN -->
+<!-- ══════════════════════════════════════ -->
+<div id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-logo">Kalvi<span>Mini</span></div>
+    <div class="lock-subtitle">Online Tuition | kalviminituition.in</div>
+    <h2>🔐 First Weekly Test 2026</h2>
+    <p>Enter the secret test code shared by your teacher to view the question paper.</p>
+    <input type="password" id="codeInput" placeholder="Enter Test Code" maxlength="10" />
+    <button class="lock-btn" onclick="checkCode()">View Question Paper →</button>
+    <div class="lock-error" id="lockError">❌ Wrong code! Please check and try again.</div>
+    <div class="lock-info">
+      <strong>Test ID:</strong> KM12WT01 &nbsp;|&nbsp;
+      <strong>Duration:</strong> 2 Hours 30 Minutes<br/>
+      <strong>Max Marks:</strong> 100
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- BLOCKED SCREEN -->
+<!-- ══════════════════════════════════════ -->
+<div id="blockedScreen" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg,#7F1D1D,#DC2626); z-index:9999; align-items:center; justify-content:center; text-align:center; padding:20px; flex-direction:column;">
+  <div class="block-icon">🚫</div>
+  <h1 style="color:white; font-size:1.8rem; margin-bottom:12px;">Access Blocked!</h1>
+  <p style="color:rgba(255,255,255,0.85); font-size:0.95rem; max-width:380px;">You left or minimized the test page. Re-entry is not allowed. Please contact your teacher.<br/><br/><strong style="color:white;">KalviMini Tuition</strong></p>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- EXPIRED SCREEN -->
+<!-- ══════════════════════════════════════ -->
+<div id="expiredScreen" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg,#1A3C6E,#0D2550); z-index:9999; align-items:center; justify-content:center; text-align:center; padding:20px; flex-direction:column;">
+  <div class="exp-icon">⏰</div>
+  <h1 style="color:#F4A300; font-size:1.8rem; margin-bottom:12px;">Time's Up!</h1>
+  <p style="color:rgba(255,255,255,0.85); font-size:0.95rem;">Your 2 Hours 30 Minutes test time has ended. Please submit your answer sheet to your teacher.<br/><br/><strong style="color:#F4A300;">KalviMini Tuition | kalviminituition.in</strong></p>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- STICKY HEADER -->
+<!-- ══════════════════════════════════════ -->
+<header class="test-header" id="mainHeader" style="display:none;">
+  <div class="header-top">
+    <div class="brand">Kalvi<span>Mini</span> Online Tuition</div>
+    <div class="timer-box" id="timerDisplay">2:30:00</div>
+  </div>
+  <div class="header-info">
+    <span>📋 <strong>Test ID:</strong> KM12WT01</span>
+    <span>🎯 <strong>Max Marks:</strong> 100</span>
+    <span>📚 <strong>Class:</strong> 12th Standard</span>
+    <span>📅 <strong>First Weekly Test 2026</strong></span>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════ -->
+<!-- TEST CONTENT -->
+<!-- ══════════════════════════════════════ -->
+<div id="testContent" style="display:none;">
+
+  <!-- TITLE BANNER -->
+  <div class="test-banner">
+    <h1>KALVI MINI ONLINE TUITION<br/>First Weekly Test – 2026</h1>
+    <div class="test-id">Test ID: KM12WT01 &nbsp;|&nbsp; Code: KMWT2601</div>
+    <div class="test-meta">
+      <span class="meta-chip">📚 12th Standard</span>
+      <span class="meta-chip">⏱ 2 Hours 30 Minutes</span>
+      <span class="meta-chip">🎯 100 Marks</span>
+      <span class="meta-chip">📖 Maths + Physics + Chemistry + English</span>
+    </div>
+  </div>
+
+  <!-- INSTRUCTIONS -->
+  <div class="instructions" style="max-width:900px; margin:20px auto;">
+    <h3>📌 Important Instructions / முக்கியமான வழிமுறைகள்</h3>
+    <ol>
+      <li>Write your answers in your notebook. / உங்கள் விடைகளை நோட்டுப் புத்தகத்தில் எழுதுக.</li>
+      <li>Do not leave or minimize this page during the test. / தேர்வு நேரத்தில் இந்தப் பக்கத்தை விட்டு வெளியேற வேண்டாம்.</li>
+      <li>The timer will auto-stop when time is up. / நேரம் முடியும்போது தானாக நிறுத்தப்படும்.</li>
+      <li>Read all questions carefully before answering. / விடையளிப்பதற்கு முன் அனைத்து வினாக்களையும் கவனமாகப் படிக்கவும்.</li>
+      <li>Submit your answer notebook to your teacher after the test. / தேர்வு முடிந்தவுடன் விடை நோட்டை ஆசிரியரிடம் சமர்ப்பிக்கவும்.</li>
+    </ol>
+  </div>
+
+  <div class="container">
+
+    <!-- ════════════════════════════════ -->
+    <!-- MATHEMATICS -->
+    <!-- ════════════════════════════════ -->
+    <div class="subject-block">
+      <div class="subject-header sh-maths">
+        <span class="subject-icon">📐</span>
+        <h2>Mathematics — கணிதம்</h2>
+        <span class="marks-badge">35 Marks | 1 Hr 30 Min</span>
+      </div>
+      <div style="background:#EFF6FF; padding:8px 24px; font-size:0.78rem; color:#1E40AF; font-weight:600;">
+        Unit 1 – Applications of Matrices and Determinants / அணிகளும் தகணிகளும் – பயன்பாடுகள்
+      </div>
+
+      <!-- PART A -->
+      <div class="part-section">
+        <div class="part-label">📝 PART A — 1 Mark Questions</div>
+        <div class="part-instruction">Answer All Questions — 5 × 1 = 5 Marks</div>
+
+        <!-- Q1 -->
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.1</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body">
+            <div class="single-lang">
+              If \(|\text{adj}(\text{adj } A)| = |A|^9\), then the order of the square matrix \(A\) is<br/>
+              <div class="mcq-options">
+                <div class="mcq-opt">(1) 3</div>
+                <div class="mcq-opt">(2) 4</div>
+                <div class="mcq-opt">(3) 2</div>
+                <div class="mcq-opt">(4) 5</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.2</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body">
+            <div class="single-lang">
+              If \(A\) is a \(3 \times 3\) non-singular matrix such that \(AA^T = A^TA\) and \(B = A^{-1}A^T\), then \(BB^T\) is<br/>
+              <div class="mcq-options">
+                <div class="mcq-opt">(1) \(A\)</div>
+                <div class="mcq-opt">(2) \(B\)</div>
+                <div class="mcq-opt">(3) \(I_3\)</div>
+                <div class="mcq-opt">(4) \(B^T\)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.3</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body">
+            <div class="single-lang">
+              If \(A = \begin{bmatrix} 7 & 3 \\ 4 & 2 \end{bmatrix}\), then \(9I - A\) is<br/>
+              <div class="mcq-options">
+                <div class="mcq-opt">(1) \(A^{-1}\)</div>
+                <div class="mcq-opt">(2) \(A^{-1}/2\)</div>
+                <div class="mcq-opt">(3) \(3A^{-1}\)</div>
+                <div class="mcq-opt">(4) \(2A^{-1}\)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.4</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body">
+            <div class="single-lang">
+              The rank of the matrix \(\begin{bmatrix} 1 & 2 & 3 \\ 2 & 4 & 6 \\ 3 & 6 & 9 \end{bmatrix}\) is<br/>
+              <div class="mcq-options">
+                <div class="mcq-opt">(1) 1</div>
+                <div class="mcq-opt">(2) 2</div>
+                <div class="mcq-opt">(3) 3</div>
+                <div class="mcq-opt">(4) 0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.5</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body">
+            <div class="single-lang">
+              If \(\rho(A) = \rho([A|B])\), then the system \(AX = B\) of linear equations is<br/>
+              <div class="mcq-options">
+                <div class="mcq-opt">(1) Consistent and has a unique solution</div>
+                <div class="mcq-opt">(2) Consistent</div>
+                <div class="mcq-opt">(3) Consistent and has infinitely many solutions</div>
+                <div class="mcq-opt">(4) Inconsistent</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="part-div"/>
+
+      <!-- PART B -->
+      <div class="part-section">
+        <div class="part-label">📝 PART B — 2 Mark Questions</div>
+        <div class="part-instruction">Answer Any 3 out of 4 Questions — 3 × 2 = 6 Marks</div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.6</span><span class="q-marks m2">2 Marks</span></div>
+          <div class="q-body"><div class="single-lang">Find the adjoint of the matrix \(\begin{bmatrix} -3 & 4 \\ 6 & 2 \end{bmatrix}\).</div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.7</span><span class="q-marks m2">2 Marks</span></div>
+          <div class="q-body"><div class="single-lang">Solve by matrix inversion method: \(2x + 5y = -2\), &nbsp; \(x + 2y = -3\)</div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.8</span><span class="q-marks m2">2 Marks</span></div>
+          <div class="q-body"><div class="single-lang">Find the rank of the matrix \(\begin{bmatrix} 2 & -4 \\ -1 & 2 \end{bmatrix}\) by the minor method.</div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.9</span><span class="q-marks m2">2 Marks</span></div>
+          <div class="q-body"><div class="single-lang">If \(A = \begin{bmatrix} 1 & 1 \\ 1 & 2 \end{bmatrix}\), verify that \(A(\text{adj } A) = |A|I_2\).</div></div>
+        </div>
+      </div>
+
+      <hr class="part-div"/>
+
+      <!-- PART C -->
+      <div class="part-section">
+        <div class="part-label">📝 PART C — 3 Mark Questions</div>
+        <div class="part-instruction">Answer Any 3 out of 4 Questions — 3 × 3 = 9 Marks</div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.10</span><span class="q-marks m3">3 Marks</span></div>
+          <div class="q-body"><div class="single-lang">Find the inverse of the matrix \(\begin{bmatrix} 2 & -1 \\ 5 & -2 \end{bmatrix}\) by Gauss-Jordan method.</div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.11</span><span class="q-marks m3">3 Marks</span></div>
+          <div class="q-body"><div class="single-lang">Solve by Cramer's rule: \(x_1 - x_2 = 3\), &nbsp; \(2x_1 + 3x_2 + 4x_3 = 17\), &nbsp; \(x_2 + 2x_3 = 7\)</div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.12</span><span class="q-marks m3">3 Marks</span></div>
+          <div class="q-body"><div class="single-lang">Find the matrix \(A\) for which \(A \begin{bmatrix} 5 & 3 \\ -1 & -2 \end{bmatrix} = \begin{bmatrix} 14 & 7 \\ 7 & 7 \end{bmatrix}\).</div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.13</span><span class="q-marks m3">3 Marks</span></div>
+          <div class="q-body"><div class="single-lang">Reduce the matrix \(\begin{bmatrix} 1 & 3 & 4 & 7 \\ 2 & 4 & 5 & 8 \\ 3 & 1 & 2 & 6 \end{bmatrix}\) to row-echelon form.</div></div>
+        </div>
+      </div>
+
+      <hr class="part-div"/>
+
+      <!-- PART D -->
+      <div class="part-section">
+        <div class="part-label">📝 PART D — 5 Mark Questions</div>
+        <div class="part-instruction">Answer Any 3 Questions — 3 × 5 = 15 Marks</div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.14 (A)</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="single-lang">Solve using matrix inversion method:<br/>\(2x_1 + 3x_2 + 3x_3 = 5\), &nbsp; \(x_1 - 2x_2 + x_3 = -4\), &nbsp; \(3x_1 - x_2 - 2x_3 = 3\)</div></div>
+        </div>
+        <div class="or-divider"><span class="or-tag">OR</span></div>
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.14 (B)</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="single-lang">Solve by Gaussian elimination method:<br/>\(2x + 4y + 6z = 22\), &nbsp; \(3x + 8y + 5z = 27\), &nbsp; \(-x + y + 2z = 2\)</div></div>
+        </div>
+
+        <div class="q-card" style="margin-top:12px;">
+          <div class="q-card-head"><span class="q-no">Q.15 (A)</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="single-lang">Find the condition on \(a, b, c\) so that the system has a one-parameter family of solutions:<br/>\(x + y + z = a\), &nbsp; \(x + 2y + 3z = b\), &nbsp; \(3x + 5y + 7z = c\)</div></div>
+        </div>
+        <div class="or-divider"><span class="or-tag">OR</span></div>
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.15 (B)</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="single-lang">Solve the homogeneous system:<br/>\(3x + 2y + 7z = 0\), &nbsp; \(4x - 3y - 2z = 0\), &nbsp; \(5x + 9y + 23z = 0\)</div></div>
+        </div>
+
+        <div class="q-card" style="margin-top:12px;">
+          <div class="q-card-head"><span class="q-no">Q.16 (A)</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="single-lang">Investigate for what values of \(\lambda\) and \(\mu\) the system has (i) no solution (ii) a unique solution (iii) infinitely many solutions:<br/>\(x + y + z = 6\), &nbsp; \(x + 2y + 3z = 10\), &nbsp; \(x + 2y + \lambda z = \mu\)</div></div>
+        </div>
+        <div class="or-divider"><span class="or-tag">OR</span></div>
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.16 (B)</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="single-lang">By Gaussian elimination method, balance the chemical equation:<br/>\(C_5H_8 + O_2 \rightarrow CO_2 + H_2O\)</div></div>
+        </div>
+
+        <div class="q-card" style="margin-top:12px;">
+          <div class="q-card-head"><span class="q-no">Q.17 (A)</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="single-lang">A chemist has one solution which is 50% acid and another which is 25% acid. How much of each should be mixed to make 10 litres of a 40% acid solution? (Use Cramer's rule)</div></div>
+        </div>
+        <div class="or-divider"><span class="or-tag">OR</span></div>
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.17 (B)</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="single-lang">If \(A = \frac{1}{9} \begin{bmatrix} -8 & 1 & 4 \\ 4 & 4 & 7 \\ 1 & -8 & 4 \end{bmatrix}\), prove that \(A^{-1} = A^T\).</div></div>
+        </div>
+      </div>
+
+    </div><!-- end maths block -->
+
+    <!-- ════════════════════════════════ -->
+    <!-- PHYSICS -->
+    <!-- ════════════════════════════════ -->
+    <div class="subject-block">
+      <div class="subject-header sh-physics">
+        <span class="subject-icon">⚡</span>
+        <h2>Physics — இயற்பியல்</h2>
+        <span class="marks-badge">35 Marks | 1 Hr 30 Min</span>
+      </div>
+      <div style="background:#F0FDF4; padding:8px 24px; font-size:0.78rem; color:#065F46; font-weight:600;">
+        Unit 1 – Electrostatics / நிலைமின்னியல் &nbsp;|&nbsp; Unit 2 – 5 Mark Questions Only / யூனிட் 2 – 5 மதிப்பெண் வினாக்கள் மட்டும்
+      </div>
+
+      <!-- PART A -->
+      <div class="part-section">
+        <div class="part-label">📝 PART A — 1 Mark Questions</div>
+        <div class="part-instruction">Answer All Questions — 5 × 1 = 5 Marks</div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.1</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body">
+            <div class="bilingual">
+              <div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Rank the electric flux through the four Gaussian surfaces containing charges in increasing order.</div>
+              <div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>மின்னூட்டங்களைக் கொண்டுள்ள நான்கு காஸ்ஸியன் பரப்புகளின் வழியாகச் செல்லும் மின்பாயத்தின் மதிப்புகளை ஏறுவரிசையில் வரிசைப்படுத்துக.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.2</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body">
+            <div class="bilingual">
+              <div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>A parallel plate capacitor stores a charge Q at voltage V. If area and distance are each doubled, which quantity changes?<br/>
+                <div class="mcq-options">
+                  <div class="mcq-opt">(a) Capacitance</div>
+                  <div class="mcq-opt">(b) Charge</div>
+                  <div class="mcq-opt">(c) Voltage</div>
+                  <div class="mcq-opt">(d) Energy density</div>
+                </div>
+              </div>
+              <div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>V மின்னழுத்த வேறுபாடு கொண்ட இணைத்தட்டு மின் தேக்கி Q அளவு மின்னூட்டம் சேமிக்கிறது. தட்டுகளின் பரப்பளவும் தொலைவும் இருமடங்கானால் எந்த அளவு மாறுபடும்?<br/>
+                <div class="mcq-options">
+                  <div class="mcq-opt mcq-opt-ta">(அ) மின் தேக்குத்திறன்</div>
+                  <div class="mcq-opt mcq-opt-ta">(ஆ) மின்னூட்டம்</div>
+                  <div class="mcq-opt mcq-opt-ta">(இ) மின்னழுத்த வேறுபாடு</div>
+                  <div class="mcq-opt mcq-opt-ta">(ஈ) ஆற்றல் அடர்த்தி</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.3</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body">
+            <div class="bilingual">
+              <div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Two identical conducting balls with charges \(q_1\) and \(q_2\) separated by distance \(r\) are touched and separated again. The force between them will be:<br/>
+                <div class="mcq-options">
+                  <div class="mcq-opt">(a) Less than before</div>
+                  <div class="mcq-opt">(b) Same as before</div>
+                  <div class="mcq-opt">(c) More than before</div>
+                  <div class="mcq-opt">(d) Zero</div>
+                </div>
+              </div>
+              <div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>\(q_1\) மற்றும் \(q_2\) நேர் மின்னூட்டம் கொண்ட இரு கோளங்கள் \(r\) தொலைவில் உள்ளன. ஒன்றையொன்று தொட்டுவிட்டு மீண்டும் அதே தொலைவில் வைக்கப்பட்டால் விசை:<br/>
+                <div class="mcq-options">
+                  <div class="mcq-opt mcq-opt-ta">(அ) முன்பை விடக் குறையும்</div>
+                  <div class="mcq-opt mcq-opt-ta">(ஆ) முன்பைப் போலவே இருக்கும்</div>
+                  <div class="mcq-opt mcq-opt-ta">(இ) முன்பை விட அதிகமாகும்</div>
+                  <div class="mcq-opt mcq-opt-ta">(ஈ) சுழியாகும்</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.4</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body">
+            <div class="bilingual">
+              <div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Give the unit of capacitance.</div>
+              <div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>மின் தேக்குத்திறனின் அலகைத் தருக.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.5</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body">
+            <div class="bilingual">
+              <div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Rank the Gaussian surfaces in increasing order of total electric flux. Surface A: \(+2q\), Surface B: \(+q\) and \(-q\), Surface C: \(+q\), Surface D: zero net charge.</div>
+              <div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>காஸ்ஸியன் பரப்புகளை மொத்த மின்பாயத்தின் ஏறுவரிசையில் வரிசைப்படுத்துக. பரப்பு A: \(+2q\), பரப்பு B: \(+q\) மற்றும் \(-q\), பரப்பு C: \(+q\), பரப்பு D: நிகர மின்னூட்டம் இல்லை.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="part-div"/>
+
+      <!-- PART B -->
+      <div class="part-section">
+        <div class="part-label">📝 PART B — 2 Mark Questions</div>
+        <div class="part-instruction">Answer Any 3 out of 4 Questions — 3 × 2 = 6 Marks</div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.6</span><span class="q-marks m2">2 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Define 'electric flux'.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>'மின்பாயம்' – வரையறு.</div></div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.7</span><span class="q-marks m2">2 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>What is meant by quantisation of charges?</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>மின்னூட்டத்தின் குவாண்டமாக்கல் என்றால் என்ன?</div></div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.8</span><span class="q-marks m2">2 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>State Gauss law.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>காஸ் விதியைக் கூறுக.</div></div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.9</span><span class="q-marks m2">2 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>What is corona discharge?</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>ஒளிவட்ட மின்னிறக்கம் (corona discharge) என்றால் என்ன?</div></div></div>
+        </div>
+      </div>
+
+      <hr class="part-div"/>
+
+      <!-- PART C -->
+      <div class="part-section">
+        <div class="part-label">📝 PART C — 3 Mark Questions</div>
+        <div class="part-instruction">Answer Any 3 out of 4 Questions — 3 × 3 = 9 Marks</div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.10</span><span class="q-marks m3">3 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>What are the properties of an equipotential surface?</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>சம மின்னழுத்தப்பரப்பின் பண்புகள் யாவை?</div></div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.11</span><span class="q-marks m3">3 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Give the relation between electric field and electric potential.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>மின்புலம் மற்றும் நிலை மின்னழுத்தம் இடையிலான தொடர்பைத் தருக.</div></div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.12</span><span class="q-marks m3">3 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>A point charge of \(+10\ \mu C\) is placed 20 cm from another \(+10\ \mu C\). A charge of \(-2\ \mu C\) is moved from point \(a\) (5 cm) to point \(b\) (15 cm). Calculate the change in potential energy.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>\(+10\ \mu C\) புள்ளி மின்னூட்டம் மற்றொரு \(+10\ \mu C\) இலிருந்து 20 cm தொலைவில் உள்ளது. \(-2\ \mu C\) மின்னூட்டம் \(a\) புள்ளியிலிருந்து (5 cm) \(b\) புள்ளிக்கு (15 cm) நகர்த்தப்படுகிறது. மின்னழுத்த ஆற்றல் மாற்றத்தைக் கணக்கிடுக.</div></div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.13</span><span class="q-marks m3">3 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Obtain the expression for energy stored in a parallel plate capacitor.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>இணைத்தட்டு மின் தேக்கியில் சேமிக்கப்படும் ஆற்றலுக்கான கோவையைப் பெறுக.</div></div></div>
+        </div>
+      </div>
+
+      <hr class="part-div"/>
+
+      <!-- PART D -->
+      <div class="part-section">
+        <div class="part-label">📝 PART D — 5 Mark Questions</div>
+        <div class="part-instruction">Answer Any 3 Questions — 3 × 5 = 15 Marks &nbsp;|&nbsp; ⚠️ Unit 2 questions included here</div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.14 (A)</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Explain in detail the construction and working of a Van de Graaff generator.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>வான் டி கிராப் இயற்றியின் அமைப்பு மற்றும் வேலை செய்யும் விதத்தை விரிவாக விளக்குக.</div></div></div>
+        </div>
+        <div class="or-divider"><span class="or-tag">OR</span></div>
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.14 (B) — Unit 2</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Obtain the condition for bridge balance in Wheatstone's bridge.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>வீட்ஸ்டோன் சமனச்சுற்றில் சமன்செய் நிலைக்கான நிபந்தனையைப் பெறுக.</div></div></div>
+        </div>
+
+        <div class="q-card" style="margin-top:12px;">
+          <div class="q-card-head"><span class="q-no">Q.15 (A)</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Calculate the electric field due to a dipole on its axial line.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>மின் இருமுனையின் அச்சுக்கோட்டில் ஏதேனும் ஒரு புள்ளியில் ஏற்படும் மின்புலத்தைக் கணக்கிடுக.</div></div></div>
+        </div>
+        <div class="or-divider"><span class="or-tag">OR</span></div>
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.15 (B) — Unit 2</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Explain the determination of the internal resistance of a cell using a voltmeter.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>வோல்ட்மீட்டரைப் பயன்படுத்தி மின்கலத்தின் அக மின்தடையைக் காண்பதை விளக்குக.</div></div></div>
+        </div>
+
+        <div class="q-card" style="margin-top:12px;">
+          <div class="q-card-head"><span class="q-no">Q.16 (A)</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Explain in detail the effect of a dielectric placed in a parallel plate capacitor.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>இணைத்தட்டு மின் தேக்கியின் தட்டுகளுக்கு இடையே மின் காப்பு வைக்கப்படுவதன் விளைவை விரிவாக விளக்குக.</div></div></div>
+        </div>
+        <div class="or-divider"><span class="or-tag">OR</span></div>
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.16 (B) — Unit 2</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Describe the microscopic model of current and obtain the microscopic form of Ohm's law.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>மின்னோட்டத்தின் நுண்மாதிரிக் கொள்கையை விவரித்து அதிலிருந்து ஓம் விதியின் நுண் வடிவத்தைப் பெறுக.</div></div></div>
+        </div>
+
+        <div class="q-card" style="margin-top:12px;">
+          <div class="q-card-head"><span class="q-no">Q.17 (A)</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Derive the expression for resultant capacitance when capacitors are connected in series and in parallel.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>மின் தேக்கிகள் தொடரிணைப்பு மற்றும் பக்க இணைப்புகளில் இணைக்கப்படும்போது தொகுபயன் மின் தேக்குத்திறன் மதிப்புகளைத் தருவி.</div></div></div>
+        </div>
+        <div class="or-divider"><span class="or-tag">OR</span></div>
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.17 (B) — Unit 2</span><span class="q-marks m5">5 Marks</span></div>
+          <div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>State Joule's law of heating and explain its applications.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>ஜூலின் வெப்ப விதியைக் கூறி அதன் பயன்பாடுகளை விளக்குக.</div></div></div>
+        </div>
+      </div>
+
+    </div><!-- end physics block -->
+
+    <!-- ════════════════════════════════ -->
+    <!-- CHEMISTRY -->
+    <!-- ════════════════════════════════ -->
+    <div class="subject-block">
+      <div class="subject-header sh-chemistry">
+        <span class="subject-icon">🧪</span>
+        <h2>Chemistry — வேதியியல்</h2>
+        <span class="marks-badge">15 Marks | 30 Min</span>
+      </div>
+      <div style="background:#FFF7ED; padding:8px 24px; font-size:0.78rem; color:#92400E; font-weight:600;">
+        Unit 1 – Metallurgy / உலோகவியல்
+      </div>
+
+      <!-- PART A -->
+      <div class="part-section">
+        <div class="part-label">📝 PART A — 1 Mark Questions</div>
+        <div class="part-instruction">Answer All Questions — 5 × 1 = 5 Marks</div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.1</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body"><div class="bilingual">
+            <div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Bauxite has the composition:<div class="mcq-options"><div class="mcq-opt">(a) \(Al_2O_3\)</div><div class="mcq-opt">(b) \(Al_2O_3 \cdot nH_2O\)</div><div class="mcq-opt">(c) \(Fe_2O_3 \cdot 2H_2O\)</div><div class="mcq-opt">(d) None of these</div></div></div>
+            <div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>பாக்சைட்டின் இயைபு:<div class="mcq-options"><div class="mcq-opt mcq-opt-ta">(அ) \(Al_2O_3\)</div><div class="mcq-opt mcq-opt-ta">(ஆ) \(Al_2O_3 \cdot nH_2O\)</div><div class="mcq-opt mcq-opt-ta">(இ) \(Fe_2O_3 \cdot 2H_2O\)</div><div class="mcq-opt mcq-opt-ta">(ஈ) இவை எதுவுமல்ல</div></div></div>
+          </div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.2</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body"><div class="bilingual">
+            <div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Roasting of sulphide ore gives colourless acidic gas (A). The gas (A) is:<div class="mcq-options"><div class="mcq-opt">(a) \(CO_2\)</div><div class="mcq-opt">(b) \(SO_3\)</div><div class="mcq-opt">(c) \(SO_2\)</div><div class="mcq-opt">(d) \(H_2S\)</div></div></div>
+            <div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>சல்பைடு தாதுவை வறுக்கும் போது நிறமற்ற அமில வாயு (A) வெளியேறுகிறது. வாயு (A) ஆனது:<div class="mcq-options"><div class="mcq-opt mcq-opt-ta">(அ) \(CO_2\)</div><div class="mcq-opt mcq-opt-ta">(ஆ) \(SO_3\)</div><div class="mcq-opt mcq-opt-ta">(இ) \(SO_2\)</div><div class="mcq-opt mcq-opt-ta">(ஈ) \(H_2S\)</div></div></div>
+          </div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.3</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body"><div class="bilingual">
+            <div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Which metal is extracted by Hall-Heroult process?<div class="mcq-options"><div class="mcq-opt">(a) Al</div><div class="mcq-opt">(b) Ni</div><div class="mcq-opt">(c) Cu</div><div class="mcq-opt">(d) Zn</div></div></div>
+            <div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>ஹால் ஹெரால்ட் செயல்முறையில் பிரித்தெடுக்கப்படும் உலோகம்:<div class="mcq-options"><div class="mcq-opt mcq-opt-ta">(அ) Al</div><div class="mcq-opt mcq-opt-ta">(ஆ) Ni</div><div class="mcq-opt mcq-opt-ta">(இ) Cu</div><div class="mcq-opt mcq-opt-ta">(ஈ) Zn</div></div></div>
+          </div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.4</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body"><div class="bilingual">
+            <div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Wolframite ore is separated from tinstone by:<div class="mcq-options"><div class="mcq-opt">(a) Smelting</div><div class="mcq-opt">(b) Calcination</div><div class="mcq-opt">(c) Roasting</div><div class="mcq-opt">(d) Electromagnetic separation</div></div></div>
+            <div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>உல்ப்ரமைட் தாதுவை வெள்ளீயக்கல்லிலிருந்து பிரிக்கும் முறை:<div class="mcq-options"><div class="mcq-opt mcq-opt-ta">(அ) உருக்குதல்</div><div class="mcq-opt mcq-opt-ta">(ஆ) காற்றில்லா சூழலில் வறுத்தல்</div><div class="mcq-opt mcq-opt-ta">(இ) வறுத்தல்</div><div class="mcq-opt mcq-opt-ta">(ஈ) மின்காந்தப் பிரிப்பு முறை</div></div></div>
+          </div></div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-head"><span class="q-no">Q.5</span><span class="q-marks m1">1 Mark</span></div>
+          <div class="q-body"><div class="bilingual">
+            <div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Which ore is best concentrated by froth-floatation method?<div class="mcq-options"><div class="mcq-opt">(a) Magnetite</div><div class="mcq-opt">(b) Haematite</div><div class="mcq-opt">(c) Galena</div><div class="mcq-opt">(d) Cassiterite</div></div></div>
+            <div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>நுரைமிதப்பு முறைக்கு ஏற்ற தாது எது?<div class="mcq-options"><div class="mcq-opt mcq-opt-ta">(அ) மேக்னடைட்</div><div class="mcq-opt mcq-opt-ta">(ஆ) ஹேமடைட்</div><div class="mcq-opt mcq-opt-ta">(இ) கலீனா</div><div class="mcq-opt mcq-opt-ta">(ஈ) கேசிட்டரைட்</div></div></div>
+          </div></div>
+        </div>
+      </div>
+
+      <hr class="part-div"/>
+
+      <!-- PART B -->
+      <div class="part-section">
+        <div class="part-label">📝 PART B — 2 Mark Questions</div>
+        <div class="part-instruction">Answer Any 2 out of 3 Questions — 2 × 2 = 4 Marks</div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.6</span><span class="q-marks m2">2 Marks</span></div><div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>What are the differences between minerals and ores?</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>கனிமம் மற்றும் தாது ஆகியவற்றிற்கிடையேயான வேறுபாடுகள் யாவை?</div></div></div></div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.7</span><span class="q-marks m2">2 Marks</span></div><div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>What is calcination? Give an example.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>காற்றில்லா சூழலில் வறுத்தல் (Calcination) என்றால் என்ன? ஓர் எடுத்துக்காட்டு தருக.</div></div></div></div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.8</span><span class="q-marks m2">2 Marks</span></div><div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Explain the following with examples: (i) Gangue &nbsp; (ii) Slag</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>தகுந்த உதாரணங்களுடன் விளக்குக: (அ) மாசு &nbsp; (ஆ) கசடு</div></div></div></div>
+      </div>
+
+      <hr class="part-div"/>
+
+      <!-- PART C -->
+      <div class="part-section">
+        <div class="part-label">📝 PART C — 3 Mark Questions</div>
+        <div class="part-instruction">Answer Any 2 out of 3 Questions — 2 × 3 = 6 Marks</div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.9</span><span class="q-marks m3">3 Marks</span></div><div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Describe Mond's process for refining nickel.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>நிக்கலைத் தூய்மையாக்கப் பயன்படும் மாண்ட் முறையினை விவரிக்க.</div></div></div></div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.10</span><span class="q-marks m3">3 Marks</span></div><div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Explain zone refining process with an example.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>புலத்தூய்மையாக்கல் முறையினை ஒரு எடுத்துக்காட்டுடன் விவரி.</div></div></div></div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.11</span><span class="q-marks m3">3 Marks</span></div><div class="q-body"><div class="bilingual"><div class="lang-en"><div class="lang-label en">🇬🇧 English Medium</div>Describe the role of cryolite in the extraction of aluminium.</div><div class="lang-ta"><div class="lang-label ta">🇮🇳 Tamil Medium</div>அலுமினியம் பிரித்தெடுத்தலில் கிரையோலைட்டின் பங்கினை விவரிக்க.</div></div></div></div>
+      </div>
+
+    </div><!-- end chemistry block -->
+
+    <!-- ════════════════════════════════ -->
+    <!-- ENGLISH -->
+    <!-- ════════════════════════════════ -->
+    <div class="subject-block">
+      <div class="subject-header sh-english">
+        <span class="subject-icon">📖</span>
+        <h2>English — ஆங்கிலம்</h2>
+        <span class="marks-badge">15 Marks | 30 Min</span>
+      </div>
+      <div style="background:#F5F3FF; padding:8px 24px; font-size:0.78rem; color:#4C1D95; font-weight:600;">
+        Unit 1 – Prose, Poetry & Grammar
+      </div>
+
+      <!-- PART A -->
+      <div class="part-section">
+        <div class="part-label">📝 PART A — Vocabulary & Grammar</div>
+        <div class="part-instruction">Answer All Questions — 5 × 1 = 5 Marks</div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.1</span><span class="q-marks m1">1 Mark</span></div><div class="q-body"><div class="single-lang">Choose the correct <strong>synonym</strong> for the underlined word:<br/>He shrugged his shoulders to convey his disapproval of their <u><strong>shabby</strong></u> appearance.<div class="mcq-options"><div class="mcq-opt">(a) elegant</div><div class="mcq-opt">(b) clean</div><div class="mcq-opt">(c) untidy</div><div class="mcq-opt">(d) bright</div></div></div></div></div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.2</span><span class="q-marks m1">1 Mark</span></div><div class="q-body"><div class="single-lang">Choose the correct <strong>antonym</strong> for the underlined word:<br/>Luigi was a <u><strong>cautious</strong></u> driver.<div class="mcq-options"><div class="mcq-opt">(a) careful</div><div class="mcq-opt">(b) reckless</div><div class="mcq-opt">(c) alert</div><div class="mcq-opt">(d) slow</div></div></div></div></div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.3</span><span class="q-marks m1">1 Mark</span></div><div class="q-body"><div class="single-lang">Fill in the blank with the correct confusable:<br/>The two boys were seated _______ the bedside of their sister. &nbsp; <em>(beside / besides)</em></div></div></div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.4</span><span class="q-marks m1">1 Mark</span></div><div class="q-body"><div class="single-lang">Fill in the blank with a suitable <strong>Modal Auxiliary</strong> (compulsion):<br/>The candidates _______ answer five out of ten questions.</div></div></div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.5</span><span class="q-marks m1">1 Mark</span></div><div class="q-body"><div class="single-lang">Spot the error and rewrite the sentence correctly:<br/><em>"Either Shyam or Ram have to pay the fine."</em></div></div></div>
+      </div>
+
+      <hr class="part-div"/>
+
+      <!-- PART B -->
+      <div class="part-section">
+        <div class="part-label">📝 PART B — Short Answer Questions</div>
+        <div class="part-instruction">Answer Any 2 out of 3 Questions — 2 × 2 = 4 Marks</div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.6</span><span class="q-marks m2">2 Marks</span></div><div class="q-body"><div class="single-lang">What were the various jobs undertaken by the little boys in Verona?</div></div></div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.7</span><span class="q-marks m2">2 Marks</span></div><div class="q-body"><div class="single-lang">Who was the 'wizened warder' and what did he do?</div></div></div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.8</span><span class="q-marks m2">2 Marks</span></div><div class="q-body"><div class="single-lang">Why did Aksionov's wife stop him from going to the Nizhny Fair?</div></div></div>
+      </div>
+
+      <hr class="part-div"/>
+
+      <!-- PART C -->
+      <div class="part-section">
+        <div class="part-label">📝 PART C — Descriptive Questions</div>
+        <div class="part-instruction">Answer Any 2 out of 3 Questions — 2 × 3 = 6 Marks</div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.9</span><span class="q-marks m3">3 Marks</span></div><div class="q-body"><div class="single-lang">Justify the title of the story <em>'Two Gentlemen of Verona'</em>.</div></div></div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.10</span><span class="q-marks m3">3 Marks</span></div><div class="q-body"><div class="single-lang">"Our only enemy was gold" — Elucidate this statement with reference to the poem <em>'The Castle'</em>.</div></div></div>
+
+        <div class="q-card"><div class="q-card-head"><span class="q-no">Q.11</span><span class="q-marks m3">3 Marks</span></div><div class="q-body"><div class="single-lang">Describe the life of Aksionov as a convict in Siberia.</div></div></div>
+      </div>
+
+    </div><!-- end english block -->
+
+    <!-- FOOTER -->
+    <div class="footer-note">
+      <h3>✅ End of Question Paper</h3>
+      <p>Write all your answers in your notebook and submit to your teacher.<br/>
+      Best of luck! 💪 — <strong>KalviMini Online Tuition</strong> | kalviminituition.in</p>
+    </div>
+
+  </div><!-- end container -->
+</div><!-- end testContent -->
+
+<script>
+  const SECRET_CODE = "KMWT2601";
+  const DURATION = 150 * 60; // 150 minutes in seconds
+  let timerInterval;
+  let timeLeft = DURATION;
+  let testStarted = false;
+  let blocked = false;
+
+  // ── CHECK CODE ──
+  function checkCode() {
+    const input = document.getElementById('codeInput').value.trim().toUpperCase();
+    if (input === SECRET_CODE) {
+      document.getElementById('lockScreen').style.display = 'none';
+      document.getElementById('mainHeader').style.display = 'block';
+      document.getElementById('testContent').style.display = 'block';
+      testStarted = true;
+      startTimer();
+      window.scrollTo(0, 0);
+    } else {
+      document.getElementById('lockError').style.display = 'block';
+      document.getElementById('codeInput').value = '';
+      document.getElementById('codeInput').focus();
+    }
+  }
+
+  // Enter key support
+  document.getElementById('codeInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkCode();
+  });
+
+  // ── TIMER ──
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        showExpired();
+        return;
+      }
+      timeLeft--;
+      updateTimerDisplay();
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    const h = Math.floor(timeLeft / 3600);
+    const m = Math.floor((timeLeft % 3600) / 60);
+    const s = timeLeft % 60;
+    const display = `${pad(h)}:${pad(m)}:${pad(s)}`;
+    const el = document.getElementById('timerDisplay');
+    el.textContent = display;
+    if (timeLeft <= 300) {
+      el.classList.add('warning');
+    }
+  }
+
+  function pad(n) { return n.toString().padStart(2, '0'); }
+
+  // ── TIME EXPIRED ──
+  function showExpired() {
+    document.getElementById('mainHeader').style.display = 'none';
+    document.getElementById('testContent').style.display = 'none';
+    const exp = document.getElementById('expiredScreen');
+    exp.style.display = 'flex';
+  }
+
+  // ── BLOCK ON LEAVE ──
+  document.addEventListener('visibilitychange', function() {
+    if (testStarted && !blocked && document.hidden) {
+      blocked = true;
+      clearInterval(timerInterval);
+      document.getElementById('mainHeader').style.display = 'none';
+      document.getElementById('testContent').style.display = 'none';
+      const bl = document.getElementById('blockedScreen');
+      bl.style.display = 'flex';
+    }
+  });
+
+  // Disable right click
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Disable copy
+  document.addEventListener('copy', e => e.preventDefault());
+
+  // Disable keyboard shortcuts
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && ['c','u','s','p','a'].includes(e.key.toLowerCase())) {
+      e.preventDefault();
+    }
+    if (e.key === 'F12' || e.key === 'PrintScreen') e.preventDefault();
+  });
+</script>
+
+</body>
+</html>
