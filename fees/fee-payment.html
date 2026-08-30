@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fee Payment - Kalvimini Online Tuition</title>
+<style>
+  :root {
+    --kalvi-blue: #1a4d8f;
+    --kalvi-orange: #ff8c00;
+    --kalvi-blue-light: #e8f1fc;
+    --kalvi-orange-light: #fff3e0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, var(--kalvi-blue-light), var(--kalvi-orange-light));
+    margin: 0;
+    padding: 20px;
+    color: #222;
+  }
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  .header {
+    background: var(--kalvi-blue);
+    color: #fff;
+    padding: 24px;
+    text-align: center;
+    border-bottom: 5px solid var(--kalvi-orange);
+  }
+  .header h1 { margin: 0; font-size: 22px; }
+  .header p { margin: 6px 0 0; font-size: 14px; opacity: 0.9; }
+  .form-body { padding: 24px; }
+  label {
+    display: block;
+    font-weight: 600;
+    margin: 16px 0 6px;
+    color: var(--kalvi-blue);
+    font-size: 14px;
+  }
+  input[type="text"], select, input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--kalvi-orange);
+  }
+  .payment-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    background: var(--kalvi-blue-light);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .payment-row > div { flex: 1; }
+  .remove-row {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    height: 42px;
+  }
+  #paymentsList { margin-top: 8px; }
+  .add-btn {
+    background: var(--kalvi-orange-light);
+    color: var(--kalvi-orange);
+    border: 1.5px dashed var(--kalvi-orange);
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 4px;
+    font-size: 14px;
+  }
+  .submit-btn {
+    background: var(--kalvi-blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 24px;
+  }
+  .submit-btn:hover { background: #123a6b; }
+  .submit-btn:disabled { background: #999; cursor: not-allowed; }
+  #statusMsg {
+    text-align: center;
+    margin-top: 16px;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 8px;
+    display: none;
+  }
+  .success { background: #e6f9ec; color: #1e7e34; display: block !important; }
+  .error { background: #fdecea; color: #c0392b; display: block !important; }
+  .total-display {
+    text-align: right;
+    font-weight: 700;
+    color: var(--kalvi-blue);
+    margin-top: 8px;
+    font-size: 15px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Kalvimini Online Tuition</h1>
+    <p>Fee Payment Record</p>
+  </div>
+  <div class="form-body">
+    <label for="studentName">Student Name *</label>
+    <input type="text" id="studentName" placeholder="Enter full name" required>
+
+    <label for="standard">Standard *</label>
+    <select id="standard" required>
+      <option value="">Select Standard</option>
+      <option>6th Standard</option>
+      <option>7th Standard</option>
+      <option>8th Standard</option>
+      <option>9th Standard</option>
+      <option>10th Standard</option>
+      <option>11th Standard</option>
+      <option>12th Standard</option>
+    </select>
+
+    <label for="medium">Medium *</label>
+    <select id="medium" required>
+      <option value="">Select Medium</option>
+      <option>Tamil Medium</option>
+      <option>English Medium</option>
+    </select>
+
+    <label>Payments *</label>
+    <div id="paymentsList"></div>
+    <button type="button" class="add-btn" id="addPaymentBtn">+ Add Another Payment</button>
+    <div class="total-display" id="totalDisplay">Total: ₹0</div>
+
+    <button type="button" class="submit-btn" id="submitBtn">Submit Payment Details</button>
+    <div id="statusMsg"></div>
+  </div>
+</div>
+
+<!-- Firebase (compat SDK, matches existing Kalvimini portal setup) -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAOxnYuGOUi9VrrACQIp48cgaWQmBJBuBc",
+  authDomain: "kalvimini-tuition.firebaseapp.com",
+  projectId: "kalvimini-tuition",
+  storageBucket: "kalvimini-tuition.firebasestorage.app",
+  messagingSenderId: "591716839478",
+  appId: "1:591716839478:web:e0d5c380dad521f1306897",
+  measurementId: "G-X70J9286LS"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const months = ["January","February","March","April","May","June","July",
+  "August","September","October","November","December"];
+
+const paymentsList = document.getElementById('paymentsList');
+const totalDisplay = document.getElementById('totalDisplay');
+
+function addPaymentRow() {
+  const row = document.createElement('div');
+  row.className = 'payment-row';
+  const monthOptions = months.map(m => `<option>${m}</option>`).join('');
+  row.innerHTML = `
+    <div>
+      <label style="margin-top:0;">Month</label>
+      <select class="pay-month">${monthOptions}</select>
+    </div>
+    <div>
+      <label style="margin-top:0;">Amount (₹)</label>
+      <input type="number" class="pay-amount" min="0" placeholder="e.g. 1000">
+    </div>
+    <button type="button" class="remove-row">✕</button>
+  `;
+  row.querySelector('.remove-row').onclick = () => { row.remove(); updateTotal(); };
+  row.querySelector('.pay-amount').addEventListener('input', updateTotal);
+  paymentsList.appendChild(row);
+}
+
+function updateTotal() {
+  const amounts = document.querySelectorAll('.pay-amount');
+  let total = 0;
+  amounts.forEach(a => total += Number(a.value) || 0);
+  totalDisplay.textContent = `Total: ₹${total}`;
+}
+
+document.getElementById('addPaymentBtn').onclick = addPaymentRow;
+addPaymentRow(); // start with one row
+
+document.getElementById('submitBtn').onclick = async () => {
+  const statusMsg = document.getElementById('statusMsg');
+  const studentName = document.getElementById('studentName').value.trim();
+  const standard = document.getElementById('standard').value;
+  const medium = document.getElementById('medium').value;
+
+  const rows = document.querySelectorAll('.payment-row');
+  const payments = [];
+  rows.forEach(row => {
+    const month = row.querySelector('.pay-month').value;
+    const amount = Number(row.querySelector('.pay-amount').value);
+    if (amount > 0) payments.push({ month, amount });
+  });
+
+  if (!studentName || !standard || !medium) {
+    statusMsg.className = 'error';
+    statusMsg.textContent = 'Please fill in name, standard, and medium.';
+    return;
+  }
+  if (payments.length === 0) {
+    statusMsg.className = 'error';
+    statusMsg.textContent = 'Please add at least one payment with an amount.';
+    return;
+  }
+
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting...';
+
+  try {
+    const batch = db.batch();
+    payments.forEach(p => {
+      const ref = db.collection('payments').doc();
+      batch.set(ref, {
+        studentName,
+        standard,
+        medium,
+        month: p.month,
+        amount: p.amount,
+        submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+    await batch.commit();
+
+    statusMsg.className = 'success';
+    statusMsg.textContent = 'Thank you! Your payment details have been recorded.';
+    document.getElementById('studentName').value = '';
+    document.getElementById('standard').value = '';
+    document.getElementById('medium').value = '';
+    paymentsList.innerHTML = '';
+    addPaymentRow();
+    updateTotal();
+  } catch (err) {
+    statusMsg.className = 'error';
+    statusMsg.textContent = 'Something went wrong. Please try again.';
+    console.error(err);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit Payment Details';
+  }
+};
+</script>
+</body>
+</html>
