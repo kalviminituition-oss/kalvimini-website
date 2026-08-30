@@ -1,0 +1,283 @@
+
+
+Fee admin · HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fee Summary - Kalvimini Admin</title>
+<style>
+  :root {
+    --kalvi-blue: #1a4d8f;
+    --kalvi-orange: #ff8c00;
+    --kalvi-blue-light: #e8f1fc;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 20px;
+    color: #222;
+  }
+  .container { max-width: 1000px; margin: 0 auto; }
+  .header {
+    background: var(--kalvi-blue);
+    color: #fff;
+    padding: 20px;
+    border-radius: 12px 12px 0 0;
+    border-bottom: 5px solid var(--kalvi-orange);
+  }
+  .header h1 { margin: 0; font-size: 20px; }
+  .controls {
+    background: #fff;
+    padding: 14px 20px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+  }
+  .controls input, .controls select {
+    padding: 8px 10px;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+  }
+  th, td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+  }
+  th { background: var(--kalvi-blue-light); color: var(--kalvi-blue); }
+  tr.student-row { cursor: pointer; }
+  tr.student-row:hover { background: #fafbfc; }
+  .total-cell { font-weight: 700; color: var(--kalvi-blue); }
+  .detail-row { display: none; background: #fcfcfc; }
+  .detail-row.open { display: table-row; }
+  .month-tag {
+    display: inline-block;
+    background: var(--kalvi-blue-light);
+    color: var(--kalvi-blue);
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin: 3px 4px 3px 0;
+    font-size: 13px;
+  }
+  .edit-btn, .del-btn {
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 6px;
+  }
+  .edit-btn { background: var(--kalvi-orange); color: #fff; }
+  .del-btn { background: #e74c3c; color: #fff; }
+  #loadingMsg { padding: 20px; text-align: center; color: #666; }
+ 
+  #loginScreen {
+    max-width: 380px;
+    margin: 80px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  #loginScreen h2 { color: var(--kalvi-blue); margin-top: 0; }
+  #loginScreen input {
+    width: 100%;
+    padding: 10px 12px;
+    margin: 8px 0;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+  #loginScreen button {
+    width: 100%;
+    background: var(--kalvi-blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  #loginError { color: #c0392b; font-size: 13px; margin-top: 8px; min-height: 16px; }
+  #adminContent { display: none; }
+  #logoutBar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 0;
+  }
+  #logoutBar button {
+    background: none;
+    border: 1.5px solid var(--kalvi-blue);
+    color: var(--kalvi-blue);
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+ 
+<div id="loginScreen">
+  <h2>Admin Login</h2>
+  <input type="email" id="loginEmail" placeholder="Admin email">
+  <input type="password" id="loginPassword" placeholder="Password">
+  <button id="loginBtn">Log In</button>
+  <div id="loginError"></div>
+</div>
+ 
+<div id="adminContent">
+<div class="container">
+  <div class="logoutBar" id="logoutBar"><button id="logoutBtn">Log Out</button></div>
+  <div class="header">
+    <h1>Kalvimini — Fee Payment Summary (Admin)</h1>
+  </div>
+  <div class="controls">
+    <input type="text" id="searchBox" placeholder="Search student name...">
+    <select id="standardFilter">
+      <option value="">All Standards</option>
+      <option>6th Standard</option><option>7th Standard</option><option>8th Standard</option>
+      <option>9th Standard</option><option>10th Standard</option><option>11th Standard</option><option>12th Standard</option>
+    </select>
+  </div>
+  <div id="loadingMsg">Loading payment data...</div>
+  <table id="summaryTable" style="display:none;">
+    <thead>
+      <tr><th>Student Name</th><th>Standard</th><th>Medium</th><th>Total Paid (₹)</th><th># Payments</th></tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
+</div>
+ 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAOxnYuGOUi9VrrACQIp48cgaWQmBJBuBc",
+  authDomain: "kalvimini-tuition.firebaseapp.com",
+  projectId: "kalvimini-tuition",
+  storageBucket: "kalvimini-tuition.firebasestorage.app",
+  messagingSenderId: "591716839478",
+  appId: "1:591716839478:web:e0d5c380dad521f1306897",
+  measurementId: "G-X70J9286LS"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+ 
+let allPayments = []; // flat list of payment docs {id, studentName, standard, medium, month, amount}
+let studentMap = {};  // studentName -> {standard, medium, total, payments: [...]}
+ 
+document.getElementById('loginBtn').onclick = () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const loginError = document.getElementById('loginError');
+  loginError.textContent = '';
+  auth.signInWithEmailAndPassword(email, password).catch(err => {
+    loginError.textContent = 'Login failed. Check email and password.';
+    console.error(err);
+  });
+};
+ 
+document.getElementById('logoutBtn').onclick = () => auth.signOut();
+ 
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminContent').style.display = 'block';
+    loadPayments();
+  } else {
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('adminContent').style.display = 'none';
+  }
+});
+ 
+async function loadPayments() {
+  const snap = await db.collection('payments').orderBy('submittedAt', 'desc').get();
+  allPayments = [];
+  snap.forEach(doc => allPayments.push({ id: doc.id, ...doc.data() }));
+  buildStudentMap();
+  renderTable();
+}
+ 
+function buildStudentMap() {
+  studentMap = {};
+  allPayments.forEach(p => {
+    const key = p.studentName;
+    if (!studentMap[key]) {
+      studentMap[key] = { standard: p.standard, medium: p.medium, total: 0, payments: [] };
+    }
+    studentMap[key].total += Number(p.amount) || 0;
+    studentMap[key].payments.push(p);
+  });
+}
+ 
+function renderTable() {
+  document.getElementById('loadingMsg').style.display = 'none';
+  const table = document.getElementById('summaryTable');
+  table.style.display = 'table';
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+ 
+  const search = document.getElementById('searchBox').value.toLowerCase();
+  const standardFilter = document.getElementById('standardFilter').value;
+ 
+  Object.keys(studentMap).sort().forEach(name => {
+    const s = studentMap[name];
+    if (search && !name.toLowerCase().includes(search)) return;
+    if (standardFilter && s.standard !== standardFilter) return;
+ 
+    const row = document.createElement('tr');
+    row.className = 'student-row';
+    row.innerHTML = `
+      <td>${name}</td>
+      <td>${s.standard}</td>
+      <td>${s.medium}</td>
+      <td class="total-cell">₹${s.total}</td>
+      <td>${s.payments.length}</td>
+    `;
+    const detailRow = document.createElement('tr');
+    detailRow.className = 'detail-row';
+    const monthTags = s.payments.map(p => `
+      <span class="month-tag">${p.month}: ₹${p.amount}
+        <button class="del-btn" onclick="deletePayment('${p.id}')">✕</button>
+      </span>`).join('');
+    detailRow.innerHTML = `<td colspan="5">${monthTags}</td>`;
+ 
+    row.onclick = () => detailRow.classList.toggle('open');
+    tbody.appendChild(row);
+    tbody.appendChild(detailRow);
+  });
+}
+ 
+async function deletePayment(id) {
+  if (!confirm('Delete this payment entry?')) return;
+  await db.collection('payments').doc(id).delete();
+  await loadPayments();
+}
+ 
+document.getElementById('searchBox').addEventListener('input', renderTable);
+document.getElementById('standardFilter').addEventListener('change', renderTable);
+</script>
+</body>
+</html>
+ 
