@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Registration - Kalvimini Online Tuition</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f4f6fb; margin:0; padding:20px; }
+  .form-container { max-width:500px; margin:0 auto; background:#fff; padding:25px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+  h2 { color:#1155CC; text-align:center; margin-bottom:20px; }
+  label { display:block; margin-top:12px; font-weight:bold; color:#333; }
+  input, select { width:100%; padding:8px; margin-top:5px; border:1px solid #ccc; border-radius:5px; box-sizing:border-box; }
+  button { margin-top:20px; width:100%; padding:12px; background:#1155CC; color:#fff; border:none; border-radius:5px; font-size:16px; cursor:pointer; }
+  button:hover { background:#0d3d99; }
+  #msg { text-align:center; margin-top:15px; font-weight:bold; }
+</style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>Kalvimini Online Tuition<br>Student Registration</h2>
+  <form id="regForm">
+    <label>Student Name</label>
+    <input type="text" name="studentName" required>
+
+    <label>Parent Name</label>
+    <input type="text" name="parentName" required>
+
+    <label>Parent Mobile Number</label>
+    <input type="tel" name="parentMobile" required>
+
+    <label>Student Mobile Number</label>
+    <input type="tel" name="studentMobile">
+
+    <label>Email ID</label>
+    <input type="email" name="email">
+
+    <label>Standard</label>
+    <select name="standard" required>
+      <option value="">Select</option>
+      <option value="10th">10th</option>
+      <option value="12th">12th</option>
+    </select>
+
+    <label>School Name</label>
+    <input type="text" name="schoolName">
+
+    <label>Medium</label>
+    <select name="medium" required>
+      <option value="">Select</option>
+      <option value="Tamil Medium">Tamil Medium</option>
+      <option value="English Medium">English Medium</option>
+    </select>
+
+    <label>District</label>
+    <input type="text" name="district">
+
+    <label>Preferred Call Time</label>
+    <input type="text" name="callTime" placeholder="e.g. 5 PM - 7 PM">
+
+    <button type="submit">Submit Registration</button>
+    <p id="msg"></p>
+  </form>
+</div>
+
+<script>
+const scriptURL = "https://script.google.com/macros/s/AKfycbxuBVque2Cna-7dFt18NYgsPpnM9-ho5r9TlI15DBHqFf6CQ_2_CsJwIKTsMXXkbO_0/exec"; // paste your Apps Script deployment URL here
+const form = document.getElementById("regForm");
+const msg = document.getElementById("msg");
+
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+  msg.textContent = "Submitting...";
+  fetch(scriptURL, { method: "POST", body: new FormData(form) })
+    .then(res => {
+      msg.textContent = "✅ Registration submitted successfully!";
+      msg.style.color = "green";
+      form.reset();
+    })
+    .catch(err => {
+      msg.textContent = "❌ Something went wrong. Please try again.";
+      msg.style.color = "red";
+      console.error(err);
+    });
+});
+</script>
+
+</body>
+</html>
