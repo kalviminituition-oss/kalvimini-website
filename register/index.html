@@ -10,97 +10,58 @@
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
     min-height: 100vh;
-    background: linear-gradient(135deg, #1155CC, #ff8c00);
-    background-size: 200% 200%;
-    animation: gradientShift 10s ease infinite;
+    background: #f2f9f4;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
   }
-  @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
   .form-container {
     max-width: 520px;
     width: 100%;
-    background: #fff;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    animation: slideUp 0.6s ease;
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border-top: 6px solid #2e7d32;
   }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .logo-wrap { text-align: center; margin-bottom: 10px; }
-  .logo-wrap span { font-size: 40px; }
-  h2 {
-    background: linear-gradient(90deg, #1155CC, #ff8c00);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-align: center;
-    margin: 5px 0 25px;
-    font-size: 22px;
-  }
-  label { display: block; margin-top: 14px; font-weight: 600; color: #333; font-size: 14px; }
+  .logo-wrap { text-align: center; margin-bottom: 8px; }
+  .logo-wrap span { font-size: 38px; }
+  h2 { color: #2e7d32; text-align: center; margin: 5px 0 6px; font-size: 22px; }
+  .subtitle { text-align: center; color: #6b7b6d; font-size: 13px; margin-bottom: 22px; }
+  label { display: block; margin-top: 14px; font-weight: 600; color: #2f3b30; font-size: 14px; }
   input, select {
-    width: 100%;
-    padding: 10px 12px;
-    margin-top: 6px;
-    border: 1.5px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: 0.2s ease;
+    width: 100%; padding: 10px 12px; margin-top: 6px;
+    border: 1.5px solid #dbe6dc; border-radius: 8px; font-size: 14px;
+    background: #fbfdfb; transition: 0.2s ease;
   }
   input:focus, select:focus {
-    outline: none;
-    border-color: #1155CC;
-    box-shadow: 0 0 0 3px rgba(17,85,204,0.15);
+    outline: none; border-color: #2e7d32;
+    box-shadow: 0 0 0 3px rgba(46,125,50,0.12); background: #fff;
   }
   button {
-    margin-top: 22px;
-    width: 100%;
-    padding: 13px;
-    background: linear-gradient(90deg, #1155CC, #ff8c00);
-    background-size: 200% auto;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s ease;
+    margin-top: 24px; width: 100%; padding: 13px; background: #2e7d32;
+    color: #fff; border: none; border-radius: 8px; font-size: 16px;
+    font-weight: 600; cursor: pointer; transition: background 0.2s ease;
   }
-  button:hover { background-position: right center; transform: translateY(-2px); }
-  button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  button:hover { background: #256428; }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
   #msg { text-align: center; margin-top: 15px; font-weight: 600; min-height: 20px; }
   .spinner {
-    display: inline-block;
-    width: 14px; height: 14px;
-    border: 2px solid #fff;
-    border-top: 2px solid transparent;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    vertical-align: middle;
-    margin-right: 6px;
+    display: inline-block; width: 14px; height: 14px; border: 2px solid #fff;
+    border-top: 2px solid transparent; border-radius: 50%;
+    animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .success-check {
-    display: block;
-    margin: 0 auto 10px;
-    width: 60px; height: 60px;
-  }
+  .success-check { display: block; margin: 0 auto 10px; width: 60px; height: 60px; }
 </style>
 </head>
 <body>
 
 <div class="form-container" id="formCard">
   <div class="logo-wrap"><span>📚</span></div>
-  <h2>Kalvimini Online Tuition<br>Student Registration</h2>
+  <h2>Kalvimini Online Tuition</h2>
+  <div class="subtitle">Student Registration Form</div>
 
   <form id="regForm">
     <label>Student Name</label>
@@ -136,10 +97,30 @@
     </select>
 
     <label>District</label>
-    <input type="text" name="district">
+    <select name="district" required>
+      <option value="">Select District</option>
+      <option>Chennai</option><option>Coimbatore</option><option>Madurai</option>
+      <option>Tiruchirappalli</option><option>Salem</option><option>Tirunelveli</option>
+      <option>Erode</option><option>Vellore</option><option>Thoothukudi</option>
+      <option>Dindigul</option><option>Thanjavur</option><option>Kanchipuram</option>
+      <option>Cuddalore</option><option>Pudukkottai</option><option>Nagapattinam</option>
+      <option>Karur</option><option>Namakkal</option><option>Sivagangai</option>
+      <option>Virudhunagar</option><option>Ramanathapuram</option><option>Theni</option>
+      <option>Tiruvannamalai</option><option>Villupuram</option><option>Krishnagiri</option>
+      <option>Dharmapuri</option><option>Ariyalur</option><option>Perambalur</option>
+      <option>Nilgiris</option><option>Kanyakumari</option><option>Tenkasi</option>
+      <option>Tirupathur</option><option>Ranipet</option><option>Chengalpattu</option>
+      <option>Mayiladuthurai</option><option>Kallakurichi</option><option>Tirupattur</option>
+      <option>Tiruvarur</option><option>Tiruppur</option>
+    </select>
 
     <label>Preferred Call Time</label>
-    <input type="text" name="callTime" placeholder="e.g. 6 PM - 8 PM">
+    <select name="callTime" required>
+      <option value="">Select Time</option>
+      <option>7 AM–9 AM</option><option>9 AM–11 AM</option><option>11 AM–1 PM</option>
+      <option>1 PM–3 PM</option><option>3 PM–5 PM</option><option>5 PM–7 PM</option>
+      <option>7 PM–9 PM</option><option>9 PM–10 PM</option>
+    </select>
 
     <button type="submit" id="submitBtn">Submit Registration</button>
     <p id="msg"></p>
@@ -147,7 +128,7 @@
 </div>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbyVIkTguZH-W15tkEHXKA4TKd7qW8NKhZSaMF1iKKnjdfqm_KkcM41sBg4q2VWmtRGS/exec"; // paste your Apps Script deployment URL here
+const scriptURL = "https://script.google.com/macros/s/AKfycbx90jndHnrXv0ieedacc4c-qOULar15p5snqSyJ-zB3c0TaHC-pJD7TX7Hve8e9HNuh1w/exec";
 const form = document.getElementById("regForm");
 const msg = document.getElementById("msg");
 const btn = document.getElementById("submitBtn");
@@ -160,19 +141,21 @@ form.addEventListener("submit", function (e) {
   msg.textContent = "";
 
   fetch(scriptURL, { method: "POST", body: new FormData(form) })
-    .then(res => {
+    .then(res => res.json())
+    .then(data => {
       card.innerHTML = `
-        <div style="text-align:center; animation: slideUp 0.5s ease;">
+        <div style="text-align:center;">
           <svg class="success-check" viewBox="0 0 52 52">
-            <circle cx="26" cy="26" r="25" fill="none" stroke="#28a745" stroke-width="2"/>
-            <path fill="none" stroke="#28a745" stroke-width="3" d="M14 27l7 7 17-17"/>
+            <circle cx="26" cy="26" r="25" fill="none" stroke="#2e7d32" stroke-width="2"/>
+            <path fill="none" stroke="#2e7d32" stroke-width="3" d="M14 27l7 7 17-17"/>
           </svg>
-          <h2 style="-webkit-text-fill-color:#28a745; background:none;">Registration Successful!</h2>
+          <h2 style="color:#2e7d32;">Registration Successful!</h2>
+          <p style="color:#555;">Your ID: <strong>${data.id || ""}</strong></p>
           <p style="color:#555;">We'll contact you soon. Thank you!</p>
         </div>`;
     })
     .catch(err => {
-      msg.style.color = "#d93025";
+      msg.style.color = "#c0392b";
       msg.textContent = "❌ Something went wrong. Please try again.";
       btn.disabled = false;
       btn.innerHTML = "Submit Registration";
