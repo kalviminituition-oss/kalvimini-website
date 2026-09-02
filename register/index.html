@@ -5,20 +5,103 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Student Registration - Kalvimini Online Tuition</title>
 <style>
-  body { font-family: Arial, sans-serif; background:#f4f6fb; margin:0; padding:20px; }
-  .form-container { max-width:500px; margin:0 auto; background:#fff; padding:25px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
-  h2 { color:#1155CC; text-align:center; margin-bottom:20px; }
-  label { display:block; margin-top:12px; font-weight:bold; color:#333; }
-  input, select { width:100%; padding:8px; margin-top:5px; border:1px solid #ccc; border-radius:5px; box-sizing:border-box; }
-  button { margin-top:20px; width:100%; padding:12px; background:#1155CC; color:#fff; border:none; border-radius:5px; font-size:16px; cursor:pointer; }
-  button:hover { background:#0d3d99; }
-  #msg { text-align:center; margin-top:15px; font-weight:bold; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1155CC, #ff8c00);
+    background-size: 200% 200%;
+    animation: gradientShift 10s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .form-container {
+    max-width: 520px;
+    width: 100%;
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    animation: slideUp 0.6s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .logo-wrap { text-align: center; margin-bottom: 10px; }
+  .logo-wrap span { font-size: 40px; }
+  h2 {
+    background: linear-gradient(90deg, #1155CC, #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    margin: 5px 0 25px;
+    font-size: 22px;
+  }
+  label { display: block; margin-top: 14px; font-weight: 600; color: #333; font-size: 14px; }
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 6px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: 0.2s ease;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: #1155CC;
+    box-shadow: 0 0 0 3px rgba(17,85,204,0.15);
+  }
+  button {
+    margin-top: 22px;
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(90deg, #1155CC, #ff8c00);
+    background-size: 200% auto;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  button:hover { background-position: right center; transform: translateY(-2px); }
+  button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  #msg { text-align: center; margin-top: 15px; font-weight: 600; min-height: 20px; }
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid #fff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .success-check {
+    display: block;
+    margin: 0 auto 10px;
+    width: 60px; height: 60px;
+  }
 </style>
 </head>
 <body>
 
-<div class="form-container">
+<div class="form-container" id="formCard">
+  <div class="logo-wrap"><span>📚</span></div>
   <h2>Kalvimini Online Tuition<br>Student Registration</h2>
+
   <form id="regForm">
     <label>Student Name</label>
     <input type="text" name="studentName" required>
@@ -27,10 +110,10 @@
     <input type="text" name="parentName" required>
 
     <label>Parent Mobile Number</label>
-    <input type="tel" name="parentMobile" required>
+    <input type="tel" name="parentMobile" pattern="[0-9]{10}" required>
 
     <label>Student Mobile Number</label>
-    <input type="tel" name="studentMobile">
+    <input type="tel" name="studentMobile" pattern="[0-9]{10}">
 
     <label>Email ID</label>
     <input type="email" name="email">
@@ -56,9 +139,9 @@
     <input type="text" name="district">
 
     <label>Preferred Call Time</label>
-    <input type="text" name="callTime" placeholder="e.g. 5 PM - 7 PM">
+    <input type="text" name="callTime" placeholder="e.g. 6 PM - 8 PM">
 
-    <button type="submit">Submit Registration</button>
+    <button type="submit" id="submitBtn">Submit Registration</button>
     <p id="msg"></p>
   </form>
 </div>
@@ -67,19 +150,32 @@
 const scriptURL = "https://script.google.com/macros/s/AKfycbyVIkTguZH-W15tkEHXKA4TKd7qW8NKhZSaMF1iKKnjdfqm_KkcM41sBg4q2VWmtRGS/exec"; // paste your Apps Script deployment URL here
 const form = document.getElementById("regForm");
 const msg = document.getElementById("msg");
+const btn = document.getElementById("submitBtn");
+const card = document.getElementById("formCard");
 
-form.addEventListener("submit", function(e) {
+form.addEventListener("submit", function (e) {
   e.preventDefault();
-  msg.textContent = "Submitting...";
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Submitting...';
+  msg.textContent = "";
+
   fetch(scriptURL, { method: "POST", body: new FormData(form) })
     .then(res => {
-      msg.textContent = "✅ Registration submitted successfully!";
-      msg.style.color = "green";
-      form.reset();
+      card.innerHTML = `
+        <div style="text-align:center; animation: slideUp 0.5s ease;">
+          <svg class="success-check" viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="25" fill="none" stroke="#28a745" stroke-width="2"/>
+            <path fill="none" stroke="#28a745" stroke-width="3" d="M14 27l7 7 17-17"/>
+          </svg>
+          <h2 style="-webkit-text-fill-color:#28a745; background:none;">Registration Successful!</h2>
+          <p style="color:#555;">We'll contact you soon. Thank you!</p>
+        </div>`;
     })
     .catch(err => {
+      msg.style.color = "#d93025";
       msg.textContent = "❌ Something went wrong. Please try again.";
-      msg.style.color = "red";
+      btn.disabled = false;
+      btn.innerHTML = "Submit Registration";
       console.error(err);
     });
 });
