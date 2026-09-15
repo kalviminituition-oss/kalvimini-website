@@ -1,168 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student Registration - Kalvimini Online Tuition</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    margin: 0;
-    min-height: 100vh;
-    background: #f2f9f4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .form-container {
-    max-width: 520px;
-    width: 100%;
-    background: #ffffff;
-    padding: 32px;
-    border-radius: 14px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    border-top: 6px solid #2e7d32;
-  }
-  .logo-wrap { text-align: center; margin-bottom: 8px; }
-  .logo-wrap span { font-size: 38px; }
-  h2 { color: #2e7d32; text-align: center; margin: 5px 0 6px; font-size: 22px; }
-  .subtitle { text-align: center; color: #6b7b6d; font-size: 13px; margin-bottom: 22px; }
-  label { display: block; margin-top: 14px; font-weight: 600; color: #2f3b30; font-size: 14px; }
-  input, select {
-    width: 100%; padding: 10px 12px; margin-top: 6px;
-    border: 1.5px solid #dbe6dc; border-radius: 8px; font-size: 14px;
-    background: #fbfdfb; transition: 0.2s ease;
-  }
-  input:focus, select:focus {
-    outline: none; border-color: #2e7d32;
-    box-shadow: 0 0 0 3px rgba(46,125,50,0.12); background: #fff;
-  }
-  button {
-    margin-top: 24px; width: 100%; padding: 13px; background: #2e7d32;
-    color: #fff; border: none; border-radius: 8px; font-size: 16px;
-    font-weight: 600; cursor: pointer; transition: background 0.2s ease;
-  }
-  button:hover { background: #256428; }
-  button:disabled { opacity: 0.6; cursor: not-allowed; }
-  #msg { text-align: center; margin-top: 15px; font-weight: 600; min-height: 20px; }
-  .spinner {
-    display: inline-block; width: 14px; height: 14px; border: 2px solid #fff;
-    border-top: 2px solid transparent; border-radius: 50%;
-    animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .success-check { display: block; margin: 0 auto 10px; width: 60px; height: 60px; }
-</style>
+  <meta charset="UTF-8" />
+  <title>Kalvi Mini Online Tuition – Student Registration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Register for Kalvi Mini Online Tuition for 9th, 10th, 11th and 12th Standard. Classes conducted via Google Meet." />
+
+  <!-- Google Fonts (optional, for a clean look) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #1d67ea;       /* Kalvi Mini brand blue (adjust if you have a specific color) */
+      --primary-dark: #144bb8;
+      --bg: #f7f9fc;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --card-bg: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    /* Header / Branding */
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      color: var(--primary-dark);
+      margin-bottom: 6px;
+    }
+
+    .sub-brand {
+      font-size: 16px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* Main card */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 20px 20px 10px;
+      border-bottom: 1px solid var(--border);
+      background: #fafbff;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 6px;
+    }
+
+    .card-description {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 720px;
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+
+    /* Responsive iframe wrapper */
+    .form-wrapper {
+      width: 100%;
+      /* Ensure the form scales nicely on mobile */
+      min-height: 520px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 1200px; /* Increased height so the full form is visible without inner scroll */
+      border: 0;
+      display: block;
+    }
+
+    /* Footer info */
+    .footer-info {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .footer-info a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-info a:hover {
+      text-decoration: underline;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 600px) {
+      .brand {
+        font-size: 24px;
+      }
+      .sub-brand {
+        font-size: 14px;
+      }
+      .card-title {
+        font-size: 18px;
+      }
+      .card-description {
+        font-size: 13px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <header>
+      <div class="brand">KALVI MINI</div>
+      <div class="sub-brand">Online Tuition Registration</div>
+    </header>
 
-<div class="form-container" id="formCard">
-  <div class="logo-wrap"><span>📚</span></div>
-  <h2>Kalvimini Online Tuition</h2>
-  <div class="subtitle">Student Registration Form</div>
+    <main class="card">
+      <div class="card-header">
+        <h1 class="card-title">Kalvi Mini Online Tuition – Student Registration Form</h1>
+        <p class="card-description">
+          Online tuition classes for 9th, 10th, 11th and 12th Standard, conducted through Google Meet. 
+          Please fill in the details below. Our team will contact you via phone/WhatsApp regarding admission, timings, fees and further details.
+        </p>
+      </div>
 
-  <form id="regForm">
-    <label>Student Name</label>
-    <input type="text" name="studentName" required>
+      <div class="card-body">
+        <div class="form-wrapper">
+          <!-- Your Google Form embed code -->
+          <iframe
+            src="https://docs.google.com/forms/d/e/1FAIpQLSf-p4OmlSaFhHDb75Seh1RXz3ar5tj6m_9o410_aOH9cAwF4Q/viewform?embedded=true"
+            title="Kalvi Mini Online Tuition Registration Form"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+          >
+            Loading…
+          </iframe>
+        </div>
+      </div>
+    </main>
 
-    <label>Parent Name</label>
-    <input type="text" name="parentName" required>
-
-    <label>Parent Mobile Number</label>
-    <input type="tel" name="parentMobile" pattern="[0-9]{10}" required>
-
-    <label>Student Mobile Number</label>
-    <input type="tel" name="studentMobile" pattern="[0-9]{10}">
-
-    <label>Email ID</label>
-    <input type="email" name="email">
-
-    <label>Standard</label>
-    <select name="standard" required>
-      <option value="">Select</option>
-      <option value="10th">10th</option>
-      <option value="12th">12th</option>
-    </select>
-
-    <label>School Name</label>
-    <input type="text" name="schoolName">
-
-    <label>Medium</label>
-    <select name="medium" required>
-      <option value="">Select</option>
-      <option value="Tamil Medium">Tamil Medium</option>
-      <option value="English Medium">English Medium</option>
-    </select>
-
-    <label>District</label>
-    <select name="district" required>
-      <option value="">Select District</option>
-      <option>Chennai</option><option>Coimbatore</option><option>Madurai</option>
-      <option>Tiruchirappalli</option><option>Salem</option><option>Tirunelveli</option>
-      <option>Erode</option><option>Vellore</option><option>Thoothukudi</option>
-      <option>Dindigul</option><option>Thanjavur</option><option>Kanchipuram</option>
-      <option>Cuddalore</option><option>Pudukkottai</option><option>Nagapattinam</option>
-      <option>Karur</option><option>Namakkal</option><option>Sivagangai</option>
-      <option>Virudhunagar</option><option>Ramanathapuram</option><option>Theni</option>
-      <option>Tiruvannamalai</option><option>Villupuram</option><option>Krishnagiri</option>
-      <option>Dharmapuri</option><option>Ariyalur</option><option>Perambalur</option>
-      <option>Nilgiris</option><option>Kanyakumari</option><option>Tenkasi</option>
-      <option>Tirupathur</option><option>Ranipet</option><option>Chengalpattu</option>
-      <option>Mayiladuthurai</option><option>Kallakurichi</option><option>Tirupattur</option>
-      <option>Tiruvarur</option><option>Tiruppur</option>
-    </select>
-
-    <label>Preferred Call Time</label>
-    <select name="callTime" required>
-      <option value="">Select Time</option>
-      <option>7 AM–9 AM</option><option>9 AM–11 AM</option><option>11 AM–1 PM</option>
-      <option>1 PM–3 PM</option><option>3 PM–5 PM</option><option>5 PM–7 PM</option>
-      <option>7 PM–9 PM</option><option>9 PM–10 PM</option>
-    </select>
-
-    <button type="submit" id="submitBtn">Submit Registration</button>
-    <p id="msg"></p>
-  </form>
-</div>
-
-<script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbx90jndHnrXv0ieedacc4c-qOULar15p5snqSyJ-zB3c0TaHC-pJD7TX7Hve8e9HNuh1w/exec";
-const form = document.getElementById("regForm");
-const msg = document.getElementById("msg");
-const btn = document.getElementById("submitBtn");
-const card = document.getElementById("formCard");
-
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Submitting...';
-  msg.textContent = "";
-
-  fetch(scriptURL, { method: "POST", body: new FormData(form) })
-    .then(res => res.json())
-    .then(data => {
-      card.innerHTML = `
-        <div style="text-align:center;">
-          <svg class="success-check" viewBox="0 0 52 52">
-            <circle cx="26" cy="26" r="25" fill="none" stroke="#2e7d32" stroke-width="2"/>
-            <path fill="none" stroke="#2e7d32" stroke-width="3" d="M14 27l7 7 17-17"/>
-          </svg>
-          <h2 style="color:#2e7d32;">Registration Successful!</h2>
-          <p style="color:#555;">Your ID: <strong>${data.id || ""}</strong></p>
-          <p style="color:#555;">We'll contact you soon. Thank you!</p>
-        </div>`;
-    })
-    .catch(err => {
-      msg.style.color = "#c0392b";
-      msg.textContent = "❌ Something went wrong. Please try again.";
-      btn.disabled = false;
-      btn.innerHTML = "Submit Registration";
-      console.error(err);
-    });
-});
-</script>
-
+    <div class="footer-info">
+      <p>
+        Kalvi Mini Online Tuition<br />
+        Online Classes through Google Meet
+      </p>
+      <p style="margin-top: 8px;">
+        WhatsApp Enquiry: <strong>+91 76393 65805</strong><br />
+        Website: <a href="https://www.kalvimini.org" target="_blank" rel="noopener">www.kalvimini.org</a>
+      </p>
+    </div>
+  </div>
 </body>
 </html>
